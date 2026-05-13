@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halftime Highlights — Bears vs Eagles 1989 — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 3/2; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(0,76,151,0.3); color: var(--philly);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .rosters {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .roster-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+    }
+    .roster-team {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;
+      padding-bottom: 8px; border-bottom: 0.5px solid var(--border);
+    }
+    .roster-players {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--muted); line-height: 2; letter-spacing: 0.02em;
+    }
+
+    .context-badge {
+      width: 100%;
+      background: rgba(0,76,151,0.06);
+      border: 1px solid rgba(0,76,151,0.2);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .context-badge span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      color: var(--philly); letter-spacing: 0.04em; line-height: 1.5;
+    }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Halftime Highlights — Bears vs Eagles 1989</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3091.jpeg" alt="Halftime Highlights insert — Chicago Bears vs Philadelphia Eagles 1989" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3091.jpeg', this)">
+        <img src="../images/IMG_3091.jpeg" alt="Your framed photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/j3kAAeSwmF5pd8Dl/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/j3kAAeSwmF5pd8Dl/s-l1600.jpg" alt="eBay photo 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/iVwAAeSwu2Rpd8Dk/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/iVwAAeSwu2Rpd8Dk/s-l1600.jpg" alt="eBay photo 2">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">NFL · Football</span>
+    <h1>Halftime Highlights Insert</h1>
+    <div class="subtitle">Chicago Bears vs Philadelphia Eagles · 1989 · Sponsored by Diet Coke</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Season</div>
+        <div class="detail-value">1989 NFL</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Teams</div>
+        <div class="detail-value">Bears vs Eagles</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Format</div>
+        <div class="detail-value">Game-day roster insert</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Sponsor</div>
+        <div class="detail-value">Diet Coke / Coca-Cola</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Tagline</div>
+        <div class="detail-value">"Nothing tackles a mean thirst like Diet Coke"</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Condition</div>
+        <div class="detail-value">Original, framed</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">Rosters on the sheet</div>
+    <div class="rosters">
+      <div class="roster-card">
+        <div class="roster-team" style="color: var(--chicago);">Chicago Bears offense</div>
+        <div class="roster-players">
+          Ron Morris · WR<br>
+          Jim Covert · LT<br>
+          Mark Bortz · LG<br>
+          Jay Hilgenberg · C<br>
+          Keith Van Horne · RT<br>
+          James Thornton · TE<br>
+          Dennis McKinnon · WR<br>
+          Mike Tomczak · QB<br>
+          Brad Muster · FB<br>
+          Neal Anderson · TB
+        </div>
+      </div>
+      <div class="roster-card">
+        <div class="roster-team" style="color: var(--philly);">Philadelphia Eagles offense</div>
+        <div class="roster-players">
+          Mike Quick · WR<br>
+          Matt Darwin · LT<br>
+          Mike Schad · LG<br>
+          Dave Alexander · C<br>
+          Ben Tamburello · RG<br>
+          Keith Jackson · TE<br>
+          Cris Carter · WR<br>
+          Randall Cunningham · QB<br>
+          Anthony Toney · FB<br>
+          Keith Byars · RB
+        </div>
+      </div>
+    </div>
+
+    <div class="context-badge">
+      <span>☆ One year after the Fog Bowl. Same two teams. Randall Cunningham and Reggie White on one side, Neal Anderson and the Bears defense on the other.</span>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This is the humble paper insert that came inside your game program on a Sunday in 1989 — the official roster sheet, sponsored by Diet Coke and its memorable tagline "Nothing tackles a mean thirst like Diet Coke. The real cola taste you can drink more of because it's just one calorie." Pure 1980s NFL advertising in two sentences.</p>
+      <p>What makes it remarkable is what's on it. Look at those Eagles: Randall Cunningham at quarterback, Reggie White anchoring the defense, Cris Carter at receiver, and Keith Jackson at tight end. Four Hall of Famers on one roster sheet. On the Bears side: Neal Anderson, Jay Hilgenberg, and a defense still carrying the DNA of the legendary 1985 squad.</p>
+      <p>This is the kind of ephemera that got thrown away by the tens of thousands after every game. A paper insert, a Diet Coke ad, a roster nobody thought to keep. Framed and preserved, it's a perfect document of two great franchises at the height of the late-80s NFL.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

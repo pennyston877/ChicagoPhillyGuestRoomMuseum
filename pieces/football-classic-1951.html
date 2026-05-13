@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1951 Football Classic — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(0,76,151,0.3); color: var(--philly);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .players-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .player-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+    }
+    .player-city {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .player-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .player-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .context-badge {
+      width: 100%;
+      background: rgba(0,76,151,0.06);
+      border: 1px solid rgba(0,76,151,0.2);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .context-badge span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      color: var(--philly); letter-spacing: 0.04em; line-height: 1.5;
+    }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">1951 Football Classic</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3101.jpeg" alt="1951 Football Classic — Philadelphia Eagles vs Chicago Bears" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3101.jpeg', this)">
+        <img src="../images/IMG_3101.jpeg" alt="Your framed photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/WfkAAeSwRzZo0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/WfkAAeSwRzZo0Xao/s-l1600.jpg" alt="eBay photo 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/wbkAAeSwiXpo0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/wbkAAeSwiXpo0Xao/s-l1600.jpg" alt="eBay photo 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/xU8AAeSwF4ho0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/xU8AAeSwF4ho0Xao/s-l1600.jpg" alt="eBay photo 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/iq0AAeSwNwho0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/iq0AAeSwNwho0Xao/s-l1600.jpg" alt="eBay photo 4">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/lssAAeSwEmxo0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/lssAAeSwEmxo0Xao/s-l1600.jpg" alt="eBay photo 5">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/MykAAeSw6W5o0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/MykAAeSw6W5o0Xao/s-l1600.jpg" alt="eBay photo 6">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/OXsAAeSwaA5o0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/OXsAAeSwaA5o0Xao/s-l1600.jpg" alt="eBay photo 7">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/kWoAAeSwF8Ro0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/kWoAAeSwF8Ro0Xao/s-l1600.jpg" alt="eBay photo 8">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/mGMAAeSwvR5o0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/mGMAAeSwvR5o0Xao/s-l1600.jpg" alt="eBay photo 9">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/ElAAAeSwjNlo0Xao/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/ElAAAeSwjNlo0Xao/s-l1600.jpg" alt="eBay photo 10">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">NFL · Football</span>
+    <h1>14th Annual Football Classic</h1>
+    <div class="subtitle">Philadelphia Eagles vs Chicago Bears · Sept 15, 1951 · Municipal Stadium, Philadelphia</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Date</div>
+        <div class="detail-value">September 15, 1951</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Venue</div>
+        <div class="detail-value">Municipal Stadium, Philadelphia</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Teams</div>
+        <div class="detail-value">Eagles vs Bears</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Event</div>
+        <div class="detail-value">14th Annual Football Classic</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Sponsor</div>
+        <div class="detail-value">Philadelphia Inquirer Charities</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Original price</div>
+        <div class="detail-value">25 cents</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">Notable players</div>
+    <div class="players-grid">
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="player-name">Steve Van Buren</div>
+        <div class="player-detail">Eagles legend and Hall of Famer. The most dominant running back of his era, Van Buren powered Philadelphia's back-to-back championships in 1948 and 1949. By 1951 he was in his final season.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--chicago);">Chicago</div>
+        <div class="player-name">Johnny Lujack</div>
+        <div class="player-detail">Bears quarterback and 1947 Heisman Trophy winner out of Notre Dame. A dual-threat signal caller who set a single-game NFL passing record in 1949, throwing for 468 yards.</div>
+      </div>
+    </div>
+
+    <div class="context-badge">
+      <span>☆ This is the 4th program in the collection from the Eagles vs Bears Football Classic series — spanning 1947 through 1951. Together they document one of the great early NFL rivalries.</span>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>The bold green cover with its kicking figure and goalpost graphic is one of the most striking designs in the collection. Pure mid-century sports minimalism — the kind of design that looks just as sharp framed on a wall today as it did on a newsstand in 1951.</p>
+      <p>The Philadelphia Inquirer Football Classic had by this point become one of the most anticipated events on the NFL preseason calendar. Municipal Stadium — later known as JFK Stadium — was one of the largest venues in the country, capable of holding over 100,000 fans for major events.</p>
+      <p>By 1951 the Eagles dynasty was winding down, but Van Buren and the Birds were still a force. The Bears, meanwhile, were rebuilding toward what would become one of the league's most storied franchises through the decade ahead.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

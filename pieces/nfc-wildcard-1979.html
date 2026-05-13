@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1979 NFC Wild Card Playoff — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(0,76,151,0.3); color: var(--philly);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .score-card {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 1rem;
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 1.25rem 1rem; margin-bottom: 2.5rem;
+      text-align: center;
+    }
+    .score-team-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;
+    }
+    .score-record {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--muted); letter-spacing: 0.05em;
+    }
+    .score-result {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 900; letter-spacing: -0.02em;
+    }
+    .score-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    }
+
+    .context-badge {
+      width: 100%;
+      background: rgba(0,76,151,0.06);
+      border: 1px solid rgba(0,76,151,0.2);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .context-badge span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      color: var(--philly); letter-spacing: 0.04em; line-height: 1.5;
+    }
+
+    .players-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .player-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+    }
+    .player-city {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .player-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .player-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">1979 NFC Wild Card Playoff</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3092.jpeg" alt="1979 NFC Wild Card Playoff Program — Chicago Bears at Philadelphia Eagles">
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">NFL · Playoffs</span>
+    <h1>1979 NFC Wild Card Playoff</h1>
+    <div class="subtitle">Chicago Bears at Philadelphia Eagles · Dec 23, 1979 · Veterans Stadium</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Date</div>
+        <div class="detail-value">December 23, 1979</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Venue</div>
+        <div class="detail-value">Veterans Stadium, Philadelphia</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Game</div>
+        <div class="detail-value">NFC Wild Card</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Publication</div>
+        <div class="detail-value">Pro! Official NFL Magazine</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Season</div>
+        <div class="detail-value">1979 NFL Playoffs</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Condition</div>
+        <div class="detail-value">Original, vintage</div>
+      </div>
+    </div>
+
+    <div class="score-card">
+      <div>
+        <div class="score-team-name" style="color: var(--chicago);">Bears</div>
+        <div class="score-record">10–6</div>
+      </div>
+      <div>
+        <div class="score-result">17–27</div>
+        <div class="score-label">Final score</div>
+      </div>
+      <div>
+        <div class="score-team-name" style="color: var(--philly);">Eagles</div>
+        <div class="score-record">11–5</div>
+      </div>
+    </div>
+
+    <div class="context-badge">
+      <span>☆ Philadelphia won 27–17. The Eagles would go on to reach Super Bowl XV the following season — this game was the start of that run.</span>
+    </div>
+
+    <div class="desc-heading">Notable players</div>
+    <div class="players-grid">
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="player-name">Ron Jaworski</div>
+        <div class="player-detail">Eagles quarterback and the engine of Dick Vermeil's offense. "Jaws" led Philadelphia on a playoff run that would take them all the way to Super Bowl XV in 1981.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="player-name">Wilbert Montgomery</div>
+        <div class="player-detail">Eagles running back and one of the most explosive players in the NFL in 1979. His combination of speed and power made him nearly impossible to contain in the open field.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--chicago);">Chicago</div>
+        <div class="player-name">Walter Payton</div>
+        <div class="player-detail">"Sweetness." Widely considered one of the greatest running backs in NFL history. Payton was at the peak of his powers in 1979, carrying the Bears almost entirely on his back.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--chicago);">Chicago</div>
+        <div class="player-name">Mike Ditka</div>
+        <div class="player-detail">By 1979, Ditka had finished his playing career and was working his way toward a coaching career. He would return to Chicago as head coach in 1982 and win Super Bowl XX in 1985.</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This is the only playoff program in the collection — and it's a Philadelphia win. The 1979 NFC Wild Card game was played on December 23rd at Veterans Stadium, a cold winter afternoon that marked the beginning of one of the most exciting stretches in Eagles history.</p>
+      <p>The "Pro!" magazine format was the NFL's official game program publication, with its bold, illustrated covers. The 1979 playoffs edition features the iconic two-helmet clash design — a perfect visual metaphor for a postseason collision between two storied franchises.</p>
+      <p>Chicago came in with Walter Payton having just rushed for over 1,600 yards in the regular season. Philadelphia came in with momentum, a sold-out Veterans Stadium, and a defense that smothered even the great Sweetness. The Eagles won 27–17 and never looked back. They'd reach the Super Bowl that very next season.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+</body>
+</html>

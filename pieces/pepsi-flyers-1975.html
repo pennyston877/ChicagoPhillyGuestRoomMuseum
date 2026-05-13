@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pepsi "Best on Ice" — Flyers vs Blackhawks 1975 — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+      --flyers: #F74902;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(247,73,2,0.3); color: var(--flyers);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .player-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .player-city {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
+    }
+    .player-name { font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .player-detail { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+    .context-badge {
+      width: 100%;
+      background: rgba(247,73,2,0.06);
+      border: 1px solid rgba(247,73,2,0.2);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .context-badge span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      color: var(--flyers); letter-spacing: 0.04em; line-height: 1.5;
+    }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Pepsi "Best on Ice" — Flyers vs Blackhawks 1975</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3075.jpeg" alt="Pepsi Best on Ice — Flyers vs Blackhawks Dec 4 1975" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3075.jpeg', this)">
+        <img src="../images/IMG_3075.jpeg" alt="Your framed photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/1uwAAeSwR1No996Z/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/1uwAAeSwR1No996Z/s-l1600.jpg" alt="eBay photo 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/bBEAAeSwiSNo999D/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/bBEAAeSwiSNo999D/s-l1600.jpg" alt="eBay photo 2">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">NHL · Hockey</span>
+    <h1>Pepsi "Best on Ice" Game Lineup</h1>
+    <div class="subtitle">Philadelphia Flyers vs Chicago Blackhawks · Dec 4, 1975</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Date</div>
+        <div class="detail-value">December 4, 1975</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Teams</div>
+        <div class="detail-value">Flyers vs Blackhawks</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Cover story</div>
+        <div class="detail-value">Bernie Parent, Philadelphia Flyers</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Sponsor</div>
+        <div class="detail-value">Pepsi-Cola</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Season</div>
+        <div class="detail-value">1975–76 NHL</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Format</div>
+        <div class="detail-value">Game lineup insert, framed</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">Cover story</div>
+    <div class="player-card">
+      <div class="player-city" style="color: var(--flyers);">Philadelphia Flyers</div>
+      <div class="player-name">Bernie Parent</div>
+      <div class="player-detail">The backbone of the Broad Street Bullies dynasty. Parent won back-to-back Conn Smythe Trophies as playoff MVP in 1974 and 1975 — the only player ever to win it in consecutive years. His mask, his butterfly style, and his ice-cold composure made him one of the greatest goalies of his generation. By December 1975 he was defending champion and at the absolute peak of his powers.</div>
+    </div>
+
+    <div class="context-badge">
+      <span>☆ The Flyers had just won their second consecutive Stanley Cup in May 1975. This game was played just seven months after that championship.</span>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This game lineup sheet is a beautiful collision of two distinctly 1970s things: the Philadelphia Flyers at the height of their dynasty, and Pepsi's "Best on Ice" advertising campaign. The full-page Pepsi ad on the left features an illustrated hockey scene and a can of Pepsi in a baseball glove — bold, colorful, completely of its era.</p>
+      <p>On the right, the official rosters for both teams are laid out in classic game-night format — Philadelphia Flyers on top, Chicago Black Hawks below, with each player's number, position, and season stats. It's a snapshot of two of the NHL's most storied franchises on a Thursday night in December 1975.</p>
+      <p>Framed and preserved, this piece captures something that almost never survives: the throwaway paper ephemera of a regular season game that, at the time, nobody thought to save. Somebody did. And here it is.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
