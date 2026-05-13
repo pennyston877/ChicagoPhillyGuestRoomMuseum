@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Wall — Philadelphia vs Chicago</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    header {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 2.5rem 3rem 2rem;
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem;
+    }
+    .header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 900; line-height: 0.95; letter-spacing: -0.02em;
+    }
+    .city-philly { color: var(--philly); }
+    .city-chi { color: var(--chicago); }
+    .header-right { text-align: right; flex-shrink: 0; }
+    .header-right p {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); line-height: 1.8; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+
+    .filter-bar {
+      padding: 1rem 3rem; border-bottom: 0.5px solid var(--border);
+      display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+    }
+    .filter-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-right: 0.5rem;
+    }
+    .filter-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.05em;
+      padding: 5px 14px; border: 1px solid var(--border); background: transparent;
+      color: var(--muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; text-transform: uppercase;
+    }
+    .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+    .filter-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .gallery {
+      padding: 2.5rem 3rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1.5rem 1.25rem;
+      align-items: start;
+    }
+    .col-1 { grid-column: 1; }
+    .col-2 { grid-column: 2; }
+    .col-3 { grid-column: 3; }
+    .col-4 { grid-column: 4; }
+    .col-5 { grid-column: 5; }
+    .col-6 { grid-column: 6; }
+
+    .piece {
+      cursor: pointer; display: block; text-decoration: none; color: inherit;
+      animation: fadeUp 0.5s ease both;
+    }
+    .piece.placeholder { opacity: 0.5; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .piece-img-wrap {
+      width: 100%; aspect-ratio: 3/4; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da; position: relative;
+    }
+    .piece-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease; display: block;
+    }
+    .piece:hover .piece-img-wrap img { transform: scale(1.04); }
+
+    .piece-img-wrap.no-photo {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      background: #ede8df; border: 1px dashed rgba(26,26,24,0.2);
+    }
+    .piece-img-wrap.no-photo::before { content: '📷'; font-size: 1.4rem; opacity: 0.35; }
+    .piece-img-wrap.no-photo span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.57rem; color: var(--muted);
+      text-align: center; padding: 0 0.75rem; line-height: 1.5;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    .piece-overlay {
+      position: absolute; inset: 0; background: rgba(26,26,24,0);
+      transition: background 0.3s ease; display: flex; align-items: flex-end; padding: 1rem;
+    }
+    .piece:hover .piece-overlay { background: rgba(26,26,24,0.18); }
+    .view-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: white; background: var(--ink); padding: 4px 10px;
+      opacity: 0; transform: translateY(6px); transition: all 0.25s ease;
+    }
+    .piece:hover .view-label { opacity: 1; transform: translateY(0); }
+
+    .piece-meta { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 4px; }
+    .piece-title { font-size: 0.78rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+    .piece-date { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.03em; }
+    .piece-sport {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 2px 6px; border: 1px solid; border-radius: 2px; align-self: flex-start;
+    }
+    .sport-nfl  { color: var(--philly); border-color: rgba(0,76,151,0.3); }
+    .sport-nba  { color: #9D2235; border-color: rgba(157,34,53,0.3); }
+    .sport-nhl  { color: #F74902; border-color: rgba(247,73,2,0.3); }
+    .sport-mlb  { color: #003087; border-color: rgba(0,48,135,0.3); }
+    .sport-nasl { color: #2D6E2D; border-color: rgba(45,110,45,0.3); }
+    .sport-misc { color: var(--muted); border-color: var(--border); }
+    .sport-obj  { color: #7B4F2E; border-color: rgba(123,79,46,0.3); }
+
+    .piece.hidden { display: none; }
+
+    footer {
+      border-top: 1.5px solid var(--ink); padding: 1.5rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    footer span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .divider { width: 24px; height: 1.5px; background: var(--ink); display: inline-block; vertical-align: middle; margin: 0 8px; }
+
+    @media (max-width: 960px) {
+      .gallery { grid-template-columns: repeat(3, 1fr); padding: 1.5rem; }
+      .col-1,.col-2,.col-3,.col-4,.col-5,.col-6 { grid-column: auto; }
+    }
+    @media (max-width: 560px) {
+      header { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; }
+      .filter-bar { padding: 1rem 1.5rem; }
+      .gallery { grid-template-columns: repeat(2, 1fr); padding: 1rem; gap: 1rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>
+      <span class="city-philly">Philadelphia</span><br>
+      <span style="font-size:0.55em;font-weight:700;letter-spacing:0.15em;font-family:'IBM Plex Mono',monospace;color:var(--muted);">VS</span><br>
+      <span class="city-chi">Chicago</span>
+    </h1>
+  </div>
+  <div class="header-right">
+    <p>A personal gallery<br>of vintage rivalry<br>memorabilia</p>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="nfl">NFL</button>
+  <button class="filter-btn" data-filter="nhl">NHL</button>
+  <button class="filter-btn" data-filter="nba">NBA</button>
+  <button class="filter-btn" data-filter="mlb">MLB</button>
+  <button class="filter-btn" data-filter="nasl">NASL</button>
+  <button class="filter-btn" data-filter="misc">Misc</button>
+  <button class="filter-btn" data-filter="obj">Objects</button>
+</div>
+
+<div class="gallery">
+
+  <!-- ══════════ COLUMN 1 ══════════ -->
+
+  <a class="piece col-1" href="pieces/latimes-worldseries.html" data-sport="mlb">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3071.jpeg" alt="LA Times World Series Rotogravure 1929">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">LA Times World Series Rotogravure</div>
+      <div class="piece-date">Cubs vs Athletics · 1929</div>
+      <span class="piece-sport sport-mlb">MLB</span>
+    </div>
+  </a>
+
+  <a class="piece col-1" href="pieces/wwii-scorecard.html" data-sport="mlb">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3077.jpeg" alt="WWII Era Scorecard — Phillies vs White Sox">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">WWII Era Scorecard</div>
+      <div class="piece-date">Phillies vs White Sox · 1940s</div>
+      <span class="piece-sport sport-mlb">MLB</span>
+    </div>
+  </a>
+
+  <a class="piece col-1" href="pieces/whitesox-phillies-photo.html" data-sport="mlb">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3076.jpeg" alt="White Sox & Phillies All-Star Wire Photo 1955">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">All-Star Wire Photo</div>
+      <div class="piece-date">White Sox & Phillies · 1955</div>
+      <span class="piece-sport sport-mlb">MLB</span>
+    </div>
+  </a>
+
+  <a class="piece col-1" href="pieces/shelf-objects.html" data-sport="obj">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3104.jpeg" alt="Shelf objects — Rose, Iverson figurines, Stanley Cup puck, Wheeler baseball">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Shelf Objects</div>
+      <div class="piece-date">Rose · Iverson · Stanley Cup Puck · Wheeler Baseball</div>
+      <span class="piece-sport sport-obj">Objects</span>
+    </div>
+  </a>
+
+  <a class="piece col-1" href="pieces/baseball-cards.html" data-sport="mlb">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3074.jpeg" alt="Framed Signed Baseball Cards — White Sox and Phillies">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Signed Baseball Cards</div>
+      <div class="piece-date">White Sox & Phillies · 1960s–70s</div>
+      <span class="piece-sport sport-mlb">MLB</span>
+    </div>
+  </a>
+
+  <!-- ══════════ COLUMN 2 ══════════ -->
+
+  <a class="piece col-2" href="pieces/football-classic-1947.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3078.jpeg" alt="1947 Football Classic — Bears vs Eagles">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">10th Annual Football Classic</div>
+      <div class="piece-date">Bears vs Eagles · Sept 13, 1947</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+  <a class="piece col-2" href="pieces/gameday-1988.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3103.jpeg" alt="1988 NFL GameDay — Bears vs Eagles Playoffs">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">NFL GameDay Program</div>
+      <div class="piece-date">Bears vs Eagles · Dec 31, 1988</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+  <a class="piece col-2" href="pieces/pepsi-flyers-1975.html" data-sport="nhl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3075.jpeg" alt="Pepsi Best on Ice — Flyers vs Blackhawks 1975">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Pepsi "Best on Ice" Lineup</div>
+      <div class="piece-date">Flyers vs Blackhawks · Dec 4, 1975</div>
+      <span class="piece-sport sport-nhl">NHL</span>
+    </div>
+  </a>
+
+  <!-- ══════════ COLUMN 3 ══════════ -->
+
+  <a class="piece col-3" href="pieces/chesterfield-lineup.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3102.jpeg" alt="Chesterfield Ad with Eagles vs Bears Lineup">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Chesterfield Ad & Game Lineup</div>
+      <div class="piece-date">Eagles vs Bears · 1940s</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+  <a class="piece col-3" href="pieces/football-classic-1951.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3101.jpeg" alt="1951 Eagles vs Bears Football Classic">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">14th Annual Football Classic</div>
+      <div class="piece-date">Eagles vs Bears · Sept 15, 1951</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+  <a class="piece col-3" href="pieces/world-fair-shadowbox.html" data-sport="misc">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3110.jpeg" alt="World's Fair Shadow Box — Chicago Columbian Exposition booklet, Philadelphia fan, Super Bowl confetti">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">World's Fair Shadow Box</div>
+      <div class="piece-date">Columbian Exposition Chicago · Philly Fan · Super Bowl Confetti</div>
+      <span class="piece-sport sport-misc">Misc</span>
+    </div>
+  </a>
+
+  <!-- ══════════ COLUMN 4 ══════════ -->
+
+  <a class="piece col-4" href="pieces/penalty-leaders-card.html" data-sport="nhl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3099.jpeg" alt="1974-75 NHL Penalty Minutes Leaders — Schultz, Dupont, Russell">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">1974–75 Penalty Min. Leaders</div>
+      <div class="piece-date">Schultz · Dupont · Russell</div>
+      <span class="piece-sport sport-nhl">NHL</span>
+    </div>
+  </a>
+
+  <a class="piece col-4" href="pieces/jordan-double.html" data-sport="nba">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3098.jpeg" alt="Jordan vs Wilt and Jordan vs Barkley double frame">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Jordan vs Wilt & Jordan vs Barkley</div>
+      <div class="piece-date">Bulls vs 76ers · 1990s</div>
+      <span class="piece-sport sport-nba">NBA</span>
+    </div>
+  </a>
+
+  <a class="piece col-4" href="pieces/nfc-wildcard-1979.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3092.jpeg" alt="1979 NFC Wild Card Playoff — Eagles vs Bears">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Pro! NFC Wild Card Playoff</div>
+      <div class="piece-date">Eagles vs Bears · Dec 23, 1979</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+  <!-- ══════════ COLUMN 5 ══════════ -->
+
+  <a class="piece col-5" href="pieces/flyers-brawl.html" data-sport="nhl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3100.jpeg" alt="Signed Flyers vs Blackhawks Brawl Photo 1970s">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Flyers Multi-Signed Brawl Photo</div>
+      <div class="piece-date">Flyers vs Blackhawks · 1970s</div>
+      <span class="piece-sport sport-nhl">NHL</span>
+    </div>
+  </a>
+
+  <a class="piece col-5" href="pieces/kick-nasl.html" data-sport="nasl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3095.jpeg" alt="NASL Kick Magazine — Chicago Sting vs Philadelphia Atoms">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Kick Magazine — NASL</div>
+      <div class="piece-date">Chicago Sting vs Philadelphia Atoms</div>
+      <span class="piece-sport sport-nasl">NASL</span>
+    </div>
+  </a>
+
+  <a class="piece col-5" href="pieces/transit-brochures.html" data-sport="misc">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3096.jpeg" alt="SEPTA Timetable 1965 & CTA Transit Map 1954">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Transit Brochures</div>
+      <div class="piece-date">SEPTA 1965 · CTA Map 1954</div>
+      <span class="piece-sport sport-misc">Misc</span>
+    </div>
+  </a>
+
+  <!-- ══════════ COLUMN 6 ══════════ -->
+
+  <a class="piece col-6" href="pieces/phillies-ernie-banks.html" data-sport="mlb">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3094.jpeg" alt="Phillies Souvenir Program featuring Ernie Banks / Chicago Cubs — WCAU 12">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Phillies Souvenir Program — Ernie Banks</div>
+      <div class="piece-date">Phillies vs Cubs · WCAU 12</div>
+      <span class="piece-sport sport-mlb">MLB</span>
+    </div>
+  </a>
+
+  <a class="piece col-6" href="pieces/bulls-sixers-1968.html" data-sport="nba">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3093.jpeg" alt="1968 Chicago Bulls vs Philadelphia 76ers Program">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Chicago Bulls vs 76ers Program</div>
+      <div class="piece-date">March 16, 1968 · Chicago Stadium</div>
+      <span class="piece-sport sport-nba">NBA</span>
+    </div>
+  </a>
+
+  <a class="piece col-6" href="pieces/halftime-highlights.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3091.jpeg" alt="Halftime Highlights Diet Coke Insert — Bears vs Eagles 1980s">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">Halftime Highlights Insert</div>
+      <div class="piece-date">Bears vs Eagles · Diet Coke · 1980s</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+  <a class="piece col-6" href="pieces/bears-eagles-1963.html" data-sport="nfl">
+    <div class="piece-img-wrap">
+      <img src="images/IMG_3097.jpeg" alt="1963 Chicago Bears vs Philadelphia Eagles at Wrigley Field">
+      <div class="piece-overlay"><span class="view-label">View piece</span></div>
+    </div>
+    <div class="piece-meta">
+      <div class="piece-title">NFL Illustrated Program</div>
+      <div class="piece-date">Bears vs Eagles · Oct 27, 1963</div>
+      <span class="piece-sport sport-nfl">NFL</span>
+    </div>
+  </a>
+
+</div>
+
+<footer>
+  <span>Philadelphia <span class="divider"></span> Chicago</span>
+  <span id="piece-count">21 pieces</span>
+</footer>
+
+<script>
+  const btns = document.querySelectorAll('.filter-btn');
+  const pieces = document.querySelectorAll('.piece');
+  const counter = document.getElementById('piece-count');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      let visible = 0;
+      pieces.forEach(p => {
+        if (filter === 'all' || p.dataset.sport === filter) {
+          p.classList.remove('hidden'); visible++;
+        } else {
+          p.classList.add('hidden');
+        }
+      });
+      counter.textContent = visible + (visible === 1 ? ' piece' : ' pieces');
+    });
+  });
+</script>
+</body>
+</html>
