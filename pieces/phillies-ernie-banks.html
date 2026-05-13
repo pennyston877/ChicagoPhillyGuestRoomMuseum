@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phillies vs Cubs Program — Ernie Banks — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(0,48,135,0.3); color: #003087;
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .players-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .player-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+    }
+    .player-city {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .player-name { font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .player-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Phillies vs Cubs — Ernie Banks</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3094.jpeg" alt="Phillies vs Cubs Souvenir Program — Ernie Banks" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3094.jpeg', this)">
+        <img src="../images/IMG_3094.jpeg" alt="Your framed photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/hXwAAeSwS5Jot2L5/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/hXwAAeSwS5Jot2L5/s-l1600.jpg" alt="eBay photo 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/inYAAeSwTzRot2L6/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/inYAAeSwTzRot2L6/s-l1600.jpg" alt="eBay photo 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/hCAAAeSwj1Jot2L8/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/hCAAAeSwj1Jot2L8/s-l1600.jpg" alt="eBay photo 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/hYYAAeSwS5Jot2L9/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/hYYAAeSwS5Jot2L9/s-l1600.jpg" alt="eBay photo 4">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/jMwAAeSwCG5ot2L-/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/jMwAAeSwCG5ot2L-/s-l1600.jpg" alt="eBay photo 5">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/dqkAAeSwKntot2L~/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/dqkAAeSwKntot2L~/s-l1600.jpg" alt="eBay photo 6">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/hTwAAeSwvARot2MA/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/hTwAAeSwvARot2MA/s-l1600.jpg" alt="eBay photo 7">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">MLB · Baseball</span>
+    <h1>Phillies Souvenir Program — Ernie Banks</h1>
+    <div class="subtitle">Philadelphia Phillies vs Chicago Cubs · 1970 · WCAU 12</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Year</div>
+        <div class="detail-value">1970</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Teams</div>
+        <div class="detail-value">Phillies vs Cubs</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Cover star</div>
+        <div class="detail-value">Ernie Banks, Chicago Cubs</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Original price</div>
+        <div class="detail-value">50 cents</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Sponsor</div>
+        <div class="detail-value">WCAU 12 — News Plus & Sports</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Condition</div>
+        <div class="detail-value">Original, vintage</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">The players</div>
+    <div class="players-grid">
+      <div class="player-card">
+        <div class="player-city" style="color: var(--chicago);">Chicago</div>
+        <div class="player-name">Ernie Banks</div>
+        <div class="player-detail">"Mr. Cub." Two-time NL MVP, 14-time All-Star, and Hall of Famer. Known for his eternal optimism and his famous line: "Let's play two!"</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="player-name">Larry Bowa</div>
+        <div class="player-detail">Phillies shortstop in his rookie year in 1970. Would go on to become a 5-time All-Star and a cornerstone of the Phillies' 1980 World Series championship team.</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This 1970 Phillies souvenir program features Ernie Banks on the cover — one of baseball's most beloved figures in what would be one of his final seasons. Banks retired after 1971, having spent his entire 19-year career with the Cubs, never playing in a postseason game yet remaining one of the game's most celebrated ambassadors.</p>
+      <p>The bottom of the program is sponsored by WCAU Channel 12, Philadelphia's CBS affiliate, advertising their "News Plus & Sports — All the Phillies Games!!!" coverage. It's a perfect snapshot of early 70s Philadelphia sports media.</p>
+      <p>The program also features the logos of every NL team of the era along the sides — Cardinals, Cubs, Expos, Mets, Pirates, Reds, Padres, Giants, Astros, Braves, and Dodgers — a vivid reminder of what the National League looked like before expansion.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
