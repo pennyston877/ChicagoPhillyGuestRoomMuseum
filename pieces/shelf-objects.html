@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Shelf — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+      --flyers: #F74902;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(26,26,24,0.2); color: var(--ink);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+
+    /* Individual object cards */
+    .object-card {
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 1.25rem;
+    }
+    .object-header {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .object-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+    .object-sport {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px;
+      border: 1px solid; border-radius: 2px;
+    }
+    .tag-mlb { color: #003087; border-color: rgba(0,48,135,0.3); }
+    .tag-nhl { color: var(--flyers); border-color: rgba(247,73,2,0.3); }
+    .tag-nba { color: #9D2235; border-color: rgba(157,34,53,0.3); }
+
+    .object-body {
+      padding: 1rem 1.25rem;
+      background: rgba(26,26,24,0.02);
+    }
+    .object-detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .object-detail { font-size: 0.78rem; }
+    .object-detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      display: block; margin-bottom: 2px;
+    }
+    .object-detail-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+    .object-desc { font-size: 0.82rem; line-height: 1.65; color: var(--muted); }
+
+    .auth-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(0,76,151,0.06);
+      border: 1px solid rgba(0,76,151,0.2);
+      border-radius: 4px; padding: 5px 10px; margin-top: 8px;
+    }
+    .auth-badge span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--philly); letter-spacing: 0.04em;
+    }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+      margin-top: 1rem;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">The Shelf</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3104.jpeg" alt="The shelf — game-used baseball, Stanley Cup puck, Rose and Iverson figurines">
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="section-tag">Objects · 3D</span>
+    <h1>The Shelf</h1>
+    <div class="subtitle">Four objects. Four stories. One shelf.</div>
+    <div class="divider-line"></div>
+
+    <!-- Game-used baseball -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">Game-Used Baseball — Zach Wheeler vs Carson Kelly</div>
+        <span class="object-sport tag-mlb">MLB</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div class="object-detail">
+            <span class="object-detail-label">Date</span>
+            <span class="object-detail-value">June 9, 2025</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Inning</span>
+            <span class="object-detail-value">Top of the 5th</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Pitcher</span>
+            <span class="object-detail-value">Zach Wheeler — Philadelphia Phillies</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Batter</span>
+            <span class="object-detail-value">Carson Kelly — Chicago Cubs</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Result</span>
+            <span class="object-detail-value">Ball</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Teams</span>
+            <span class="object-detail-value">Phillies vs Cubs</span>
+          </div>
+        </div>
+        <div class="auth-badge">
+          <span>✓ MLB Authentication — PX562751</span>
+        </div>
+        <p class="object-desc" style="margin-top: 10px;">A ball that left Zach Wheeler's hand during a Phillies vs Cubs game in 2025 — authenticated by MLB with a traceable serial number. It's a ball that was called, removed from play, and ended up here. One pitch from the ongoing Philadelphia–Chicago rivalry, preserved in a case.</p>
+      </div>
+    </div>
+
+    <!-- Stanley Cup puck -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">2010 Stanley Cup Final Commemorative Puck — In Glas Co.</div>
+        <span class="object-sport tag-nhl">NHL</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div class="object-detail">
+            <span class="object-detail-label">Year</span>
+            <span class="object-detail-value">2010 Stanley Cup Final</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Series result</span>
+            <span class="object-detail-value">Blackhawks win, 4–2</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Conn Smythe MVP</span>
+            <span class="object-detail-value">Jonathan Toews</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Manufacturer</span>
+            <span class="object-detail-value">In Glas Co. — Made in Slovakia</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Teams</span>
+            <span class="object-detail-value">Flyers vs Blackhawks</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Licensed</span>
+            <span class="object-detail-value">Officially licensed NHL</span>
+          </div>
+        </div>
+        <div style="margin-top: 10px; margin-bottom: 10px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border);">
+          <img src="https://i.ebayimg.com/images/g/QG8AAeSwJdBol5xh/s-l1600.jpg" alt="2010 Stanley Cup Final puck — Flyers vs Blackhawks" style="width: 100%; display: block; object-fit: cover; max-height: 220px;">
+        </div>
+        <p class="object-desc">An officially licensed commemorative puck from the 2010 Stanley Cup Final — the last time the Philadelphia Flyers and Chicago Blackhawks met for the championship. Chicago won the series 4–2, with Jonathan Toews capturing the Conn Smythe Trophy as playoff MVP. It was the Blackhawks' first Stanley Cup since 1961. For Flyers fans, it stings. For this collection, it's perfect — the rivalry's biggest moment, in your hand.</p>
+      </div>
+    </div>
+
+    <!-- Derrick Rose figurine -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">Derrick Rose Bobblehead / Figurine</div>
+        <span class="object-sport tag-nba">NBA</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div class="object-detail">
+            <span class="object-detail-label">Player</span>
+            <span class="object-detail-value">Derrick Rose</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Team</span>
+            <span class="object-detail-value">Chicago Bulls</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Jersey</span>
+            <span class="object-detail-value">Green (alternate)</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Distributed</span>
+            <span class="object-detail-value">March 19, 2026 · Bulls game</span>
+          </div>
+        </div>
+        <p class="object-desc" style="margin-top: 8px;">A Bulls game giveaway from March 2026 featuring Derrick Rose in a green alternate jersey. Rose is one of the most beloved players in Bulls history — the 2011 NBA MVP and the youngest MVP in league history at the time. A Chicago icon.</p>
+      </div>
+    </div>
+
+    <!-- Allen Iverson figurine -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">Allen Iverson McFarlane Mini Figure</div>
+        <span class="object-sport tag-nba">NBA</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div class="object-detail">
+            <span class="object-detail-label">Player</span>
+            <span class="object-detail-value">Allen Iverson</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Team</span>
+            <span class="object-detail-value">Philadelphia 76ers</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Manufacturer</span>
+            <span class="object-detail-value">McFarlane Toys</span>
+          </div>
+          <div class="object-detail">
+            <span class="object-detail-label">Size</span>
+            <span class="object-detail-value">3" mini figure, vintage</span>
+          </div>
+        </div>
+        <p class="object-desc" style="margin-top: 8px;">"The Answer." Allen Iverson is one of the most culturally significant athletes in Philadelphia history — an 11-time All-Star, 2001 MVP, and the heart of a Sixers team that made an improbable run to the NBA Finals that year. This vintage McFarlane mini captures him in full Sixers gear, right across the shelf from a Bulls figurine. Philadelphia and Chicago, three inches tall.</p>
+      </div>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+</body>
+</html>

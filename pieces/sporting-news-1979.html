@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1979 Sporting News — Schmidt vs Kingman — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    /* ---- LEFT: SLIDESHOW ---- */
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .slideshow {
+      position: relative; width: 100%; aspect-ratio: 4/5;
+      overflow: hidden; border: 1px solid var(--border); background: #e8e3da;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .slide.active { opacity: 1; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .slide-controls {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    }
+
+    .slide-btn {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 14px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer;
+      border-radius: 2px; transition: all 0.15s; flex-shrink: 0;
+    }
+    .slide-btn:hover { border-color: var(--ink); color: var(--ink); }
+    .slide-btn:disabled { opacity: 0.3; cursor: default; }
+
+    .slide-counter {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      color: var(--muted); letter-spacing: 0.05em; text-align: center; flex: 1;
+    }
+
+    .progress-bar {
+      width: 100%; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--ink); border-radius: 1px;
+      transition: width 0.3s ease;
+    }
+
+    /* ---- RIGHT: DETAILS ---- */
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(0,48,135,0.3); color: #003087;
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .players-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .player-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+    }
+    .player-city {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .player-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .player-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">1979 Sporting News — Schmidt vs Kingman</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="slideshow" id="slideshow">
+      <div class="slide active"><img src="../images/1779025058963_1D100983-95FB-467F-8FE7-E41A40611736.jpeg" alt="Cover"></div>
+      <div class="slide"><img src="../images/1FE3CEDE-3304-46A0-B22F-064525857B23_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/2F9B5D47-CF26-4B43-BC82-B01783F28A1D_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/3F28D1D1-6D60-4D05-BBE1-904CCFE65168_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/3F3811DE-1000-49D6-9338-BF1A8651D3A9_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/4B97EF81-C58D-48DF-B552-3165E7CF1A86_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/4C35D52E-5EF0-4CE5-8FE9-8855798232D7_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/4E5A0317-7B19-4807-8095-4D961355BB7A_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/5DD97ED9-42F1-4787-ABAE-AFDF1562B33D_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/5DEDEF32-C284-4261-9D2D-9FB296867FF3_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/6AC7D578-63E7-4E5F-9C8D-E95F649F359C_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/6F2819E4-714F-4633-B14C-AC6ADE3A30BC_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/7B7D7C93-57BC-449F-8768-4811C7DA131C_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/7C2B3EA5-8015-4765-8016-93E748F529D8_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/8BD74678-39AA-42AB-AB90-B37432C0FA29_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/9B31AE9B-8C25-473D-9CC8-81B28303A0AE_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/18C3BEDF-FD76-4446-AAA3-AEB718ED3D2D_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/19FF22D2-F006-420C-87C2-3F41037E86C4_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/22ABC90C-D6D0-4AAD-9129-6BD5FA52E032_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/32E5E683-5135-4B41-B683-BF217C9EF251_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/37BC4042-9564-4B74-A758-7687C7BEC3E4_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/66A3D9E6-9359-4B1E-9232-2B0A6284A646_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/66C3E35F-634A-4395-B299-D61C17D6DEC6_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/67AD2CEC-BEB2-4A4D-8770-8512CE0FE4AD_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/90C71ADF-16F3-48E3-9CE6-7B7EF3AE5164_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/95F57370-9C6D-4EC9-9E1B-B6CA5E2A360A_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/99E4991D-AE03-4D9F-A2CE-5A9ED96D89D8_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/207E39B2-7A6F-447C-933D-F56E5F2FE5FF_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/264DB3ED-9075-411B-8622-533FB1FF0476_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/431DAEFF-464A-4F33-A7D6-45BF4AA6875C_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/439FF1CE-7475-4387-8EDD-307FFDBC8EC0_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/1916BCA3-6543-4BDA-83AA-61A765642E31_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/41809A9F-3FBF-430E-B5A4-2BDC7D399DB4_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/510538A1-1C07-4550-9426-CAF8417F7504_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/913867BE-2FAD-4234-9E75-A4FB834F42CA_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/67588420-3768-4EC6-BEE2-3B9F3B3F665C_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/68187965-4D1B-4C1F-8D93-61B954EE19B4_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/72741789-56C1-489C-9A2D-538384D38709_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/96257533-C2D0-4891-8533-51044F41C627_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/A0DC3C94-667D-495D-8A9B-F9482BA83488_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/A38FF2D2-ED04-42A4-9E51-C08FEC5CD615_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/A584BA8E-817A-4549-B669-9364D1BE2BD8_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/A936E6E5-AC84-457E-BDA9-38B73211E5B7_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/A6834684-56F7-49E5-93C7-CCB1B3CBBBC6_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/B2A7A690-FD62-4830-A157-ABEDEE796E43_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/D3A62AFF-477D-4949-9038-C3CA1498392D_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/D583DFFA-0605-4790-817B-0BCCE1088610_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/DD1864C7-18E7-4F41-A17F-39E850B65A5D_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/E34CCA18-E6DB-4772-9CAD-E501F949CDFD_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/F2B6688D-E696-4E5D-9BDC-95C91D4399A3_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/F72F43CC-2E5E-4953-9511-2CA4388C3497_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/F539DC9F-4ED6-4645-9163-689E8DCE953D_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/FADB2B43-1962-4F98-9E04-6BD2755C21C1_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/FC22B9DF-2007-443B-A1B1-F989730780CE_1_105_c.jpeg" alt="Page"></div>
+      <div class="slide"><img src="../images/FDD9863C-9AE0-4F0D-AE8A-BEB7F9763AEE_1_105_c.jpeg" alt="Page"></div>
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <div class="slide-controls">
+      <button class="slide-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Prev</button>
+      <span class="slide-counter" id="counter">1 / 55</span>
+      <button class="slide-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">MLB · Baseball</span>
+    <h1>The Sporting News</h1>
+    <div class="subtitle">Home Run Rivals — Dave Kingman vs Mike Schmidt · August 25, 1979</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Date</div>
+        <div class="detail-value">August 25, 1979</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Publication</div>
+        <div class="detail-value">The Sporting News</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Cover story</div>
+        <div class="detail-value">Home Run Rivals</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Cover stars</div>
+        <div class="detail-value">Kingman (Cubs) & Schmidt (Phillies)</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Original price</div>
+        <div class="detail-value">$1.35</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Pages inside</div>
+        <div class="detail-value">55 photographed</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">The cover stars</div>
+    <div class="players-grid">
+      <div class="player-card">
+        <div class="player-city" style="color: var(--chicago);">Chicago Cubs</div>
+        <div class="player-name">Dave Kingman</div>
+        <div class="player-detail">"Kong" — one of the most feared pure power hitters of the late 1970s. Kingman led the NL in home runs in 1979 with 48, his career best. Known for tape-measure shots and a famously difficult personality, he was box-office entertainment every time he stepped up.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia Phillies</div>
+        <div class="player-name">Mike Schmidt</div>
+        <div class="player-detail">Three-time NL MVP and Hall of Famer. Widely considered the greatest third baseman in baseball history. In 1979 Schmidt hit 45 home runs and was already establishing himself as the defining player of his generation. He and Kingman were locked in an NL home run race all summer.</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>The Sporting News was the bible of baseball — the weekly publication that serious fans read cover to cover for over a century. This August 1979 issue captures one of the great mid-season storylines of that year: the NL home run race between Dave Kingman of the Cubs and Mike Schmidt of the Phillies. Two sluggers, two cities, one cover.</p>
+      <p>Kingman would finish 1979 with 48 home runs to lead the NL. Schmidt hit 45. The cover illustration — a warm golden-toned portrait of both men with Schmidt batting in the foreground — is a beautiful piece of late-70s sports art. Flip through all 55 pages and you get a complete time capsule of baseball in the summer of 1979: the standings, the stats, the ads, the columnists, all of it.</p>
+      <p>Use the slideshow to read the whole issue.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function changeSlide(dir) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, current + dir));
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') changeSlide(1);
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+  });
+
+  // Initialize progress
+  document.getElementById('progress').style.width = (1 / total * 100) + '%';
+</script>
+
+</body>
+</html>

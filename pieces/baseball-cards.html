@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lee Elia Signed Baseball Cards — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(0,48,135,0.3); color: #003087;
+      border-radius: 2px; display: inline-block; margin-bottom: 0.5rem;
+    }
+    .family-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(139,90,43,0.4); color: #8B5A2B;
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem; margin-left: 6px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .details-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    /* Three cards timeline */
+    .cards-timeline {
+      display: flex; flex-direction: column; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 2.5rem;
+    }
+    .timeline-card {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .timeline-card:last-child { border-bottom: none; }
+    .timeline-num {
+      font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900;
+      line-height: 1; flex-shrink: 0; width: 28px; opacity: 0.15;
+    }
+    .timeline-info { flex: 1; }
+    .timeline-role {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
+    }
+    .timeline-team { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+    .timeline-years { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+
+    /* Family connection callout */
+    .family-callout {
+      width: 100%;
+      background: rgba(139,90,43,0.06);
+      border: 1px solid rgba(139,90,43,0.25);
+      border-radius: 4px;
+      padding: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .family-callout-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: #8B5A2B; margin-bottom: 0.6rem;
+    }
+    .family-callout p {
+      font-size: 0.88rem; line-height: 1.7; color: var(--ink);
+    }
+    .family-callout .maiden-name {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-style: italic; color: #8B5A2B;
+    }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Lee Elia Signed Cards</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3074.jpeg" alt="Lee Elia signed baseball cards — White Sox, Phillies, Cubs">
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">MLB · Baseball</span>
+    <span class="family-tag">Family Connection</span>
+    <h1>Lee Elia Signed Baseball Cards</h1>
+    <div class="subtitle">Chicago White Sox · Philadelphia Phillies · Chicago Cubs · Three cards, one career</div>
+    <div class="divider-line"></div>
+
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="detail-label">Subject</div>
+        <div class="detail-value">Lee Elia</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Format</div>
+        <div class="detail-value">3 signed cards, framed</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Era</div>
+        <div class="detail-value">1960s–1980s</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Connection</div>
+        <div class="detail-value">Philadelphia Albanian family</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Maiden name link</div>
+        <div class="detail-value">Soulas</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Signed</div>
+        <div class="detail-value">Yes — all three cards</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">A career in three cards</div>
+    <div class="cards-timeline">
+      <div class="timeline-card">
+        <div class="timeline-num">1</div>
+        <div class="timeline-info">
+          <div class="timeline-role" style="color: var(--chicago);">Player — Shortstop</div>
+          <div class="timeline-team">Chicago White Sox</div>
+          <div class="timeline-years">1966 · 80 games</div>
+        </div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-num">2</div>
+        <div class="timeline-info">
+          <div class="timeline-role" style="color: var(--philly);">Manager</div>
+          <div class="timeline-team">Philadelphia Phillies</div>
+          <div class="timeline-years">1987–88 · 111–142 record</div>
+        </div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-num">3</div>
+        <div class="timeline-info">
+          <div class="timeline-role" style="color: var(--chicago);">Player — Shortstop</div>
+          <div class="timeline-team">Chicago Cubs</div>
+          <div class="timeline-years">1968 · 15 games</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="family-callout">
+      <div class="family-callout-label">★ Family connection</div>
+      <p>Lee Elia is the second cousin of the owner's grandfather. The link runs through a shared Albanian heritage and a Philadelphia family name: both Lee Elia's mother and the owner's great-grandmother share the maiden name <span class="maiden-name">Soulas</span> — an Albanian surname rooted in Philadelphia's tight-knit immigrant community.</p>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This framed set of three signed cards tells the story of Lee Elia's baseball life — and it happens to touch every corner of this gallery's theme. Born and raised in Philadelphia, Elia played shortstop for the Chicago White Sox in 1966 (80 games) and the Chicago Cubs in 1968 (15 games), before transitioning into coaching and managing. He managed the Cubs from 1982 to 1983, then returned to his hometown to manage the Phillies from 1987 to 1988. He also served as third base coach for the Phillies' 1980 World Series championship team — one of the greatest moments in Philadelphia sports history.</p>
+      <p>White Sox. Cubs. Phillies. His career is practically a map of this collection.</p>
+      <p>Elia spent over 50 years in professional baseball across 10 organizations, coaching for the Yankees, Mariners, Blue Jays, Rays, and Orioles among others. He passed away in July 2025 at the age of 87. The Phillies said in their statement that he "always considered himself a Phillie at heart."</p>
+      <p>Elia is perhaps best remembered for one of the most legendary tirades in baseball history — a profanity-laced press conference rant after a Cubs loss in April 1983 that became an instant piece of sports folklore. But beyond the rant, he was a respected baseball lifer who went on to coach for multiple organizations over decades.</p>
+      <p>Three cards. Three chapters. One family name connecting Philadelphia's Albanian community across generations. This is the most personal piece on the wall.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+</body>
+</html>

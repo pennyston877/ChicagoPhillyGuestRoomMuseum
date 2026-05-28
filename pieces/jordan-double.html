@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jordan Double Frame — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+
+    .sport-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(157,34,53,0.3); color: #9D2235;
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .object-card {
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .object-header {
+      padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .object-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+    .object-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px;
+      border: 1px solid rgba(157,34,53,0.3); color: #9D2235;
+      border-radius: 2px; flex-shrink: 0;
+    }
+    .object-body { padding: 1rem 1.25rem; background: rgba(26,26,24,0.02); }
+    .object-detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem; margin-bottom: 0.85rem;
+    }
+    .object-detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      display: block; margin-bottom: 2px;
+    }
+    .object-detail-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+    .object-desc { font-size: 0.82rem; line-height: 1.65; color: var(--muted); }
+
+    .players-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .player-card {
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+    }
+    .player-city {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px;
+    }
+    .player-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .player-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Jordan Double Frame</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3098.jpeg" alt="Jordan double frame" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3098.jpeg', this)">
+        <img src="../images/IMG_3098.jpeg" alt="Your framed photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/RU8AAOSwAXxnaI-G/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/RU8AAOSwAXxnaI-G/s-l1600.jpg" alt="Jordan vs Barkley">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/CMIAAOSwu9JnpBIW/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/CMIAAOSwu9JnpBIW/s-l1600.jpg" alt="Jordan vs Dr. J">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="sport-tag">NBA · Basketball</span>
+    <h1>Jordan Double Frame</h1>
+    <div class="subtitle">Two 4×6 photos · Bulls vs Sixers across two generations</div>
+    <div class="divider-line"></div>
+
+    <!-- Photo 1: Jordan vs Barkley -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">Jordan vs Barkley — The Spectrum, 1990</div>
+        <span class="object-tag">NBA · Bulls vs Sixers</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Date</span>
+            <span class="object-detail-value">Circa 1990</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Venue</span>
+            <span class="object-detail-value">The Spectrum, Philadelphia</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Action</span>
+            <span class="object-detail-value">Jordan — reverse layup</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Photo credit</span>
+            <span class="object-detail-value">Lou Capozzola / NBAE / Getty Images</span>
+          </div>
+        </div>
+        <p class="object-desc">Michael Jordan #23 driving to the basket for a reverse layup against Charles Barkley #34 of the Philadelphia 76ers at the Spectrum in Philadelphia. One of the great individual rivalries of the era — two of the most competitive players in the history of the sport, going at it in Philly.</p>
+      </div>
+    </div>
+
+    <!-- Photo 2: Jordan vs Dr. J -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">Jordan vs Dr. J — Bulls vs Sixers</div>
+        <span class="object-tag">NBA · Bulls vs Sixers</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Players</span>
+            <span class="object-detail-value">Michael Jordan & Julius Erving</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Teams</span>
+            <span class="object-detail-value">Chicago Bulls vs Philadelphia 76ers</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Format</span>
+            <span class="object-detail-value">4×6 photo</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Era</span>
+            <span class="object-detail-value">Mid-1980s</span>
+          </div>
+        </div>
+        <p class="object-desc">Michael Jordan alongside Julius "Dr. J" Erving — the passing of the torch moment of 1980s basketball. Erving defined what was possible on a basketball court before Jordan arrived and redefined it all over again. Two of the most stylistically influential players in the history of the sport, wearing Bulls and Sixers.</p>
+      </div>
+    </div>
+
+    <div class="desc-heading">The players</div>
+    <div class="players-grid">
+      <div class="player-card">
+        <div class="player-city" style="color: var(--chicago);">Chicago Bulls</div>
+        <div class="player-name">Michael Jordan</div>
+        <div class="player-detail">Six-time NBA champion, five-time MVP, six-time Finals MVP. Widely considered the greatest basketball player of all time. He built his dynasty in Chicago and tormented Philadelphia on the way up.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia 76ers</div>
+        <div class="player-name">Charles Barkley</div>
+        <div class="player-detail">11-time All-Star and 1993 MVP. "Sir Charles" was one of Jordan's fiercest contemporaries — a power forward who played bigger than his 6'6" frame and never backed down from anyone, including MJ.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">Philadelphia 76ers</div>
+        <div class="player-name">Julius Erving — Dr. J</div>
+        <div class="player-detail">The original high-flyer. Erving invented the above-the-rim game that Jordan later perfected. An 11-time All-Star, 1981 NBA champion, and 1981 MVP — he was the most exciting player in basketball before Michael Jordan arrived.</div>
+      </div>
+      <div class="player-card">
+        <div class="player-city" style="color: var(--philly);">The Spectrum</div>
+        <div class="player-name">Philadelphia, PA</div>
+        <div class="player-detail">Home of the 76ers from 1967 to 1996. One of the great NBA arenas of the era — loud, intimidating, and the site of some of the greatest Bulls vs Sixers battles of the Jordan years.</div>
+      </div>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>Two 4×6 photos, one frame, two chapters of the same Chicago vs Philadelphia basketball story. The Dr. J photo captures the era just before Jordan arrived — when Philadelphia ruled the NBA and Chicago was still finding itself. The Barkley photo captures what happened next: Jordan ascending, taking on the toughest competition Philadelphia had to offer, at the Spectrum, on their home floor.</p>
+      <p>Dr. J to Barkley. The 76ers couldn't stop either. Neither could anyone else for very long. These two photos together tell the whole arc of Bulls vs Sixers basketball from the mid-1980s through the early 1990s — the most entertaining rivalry of that era.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

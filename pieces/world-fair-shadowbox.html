@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World's Fair Shadow Box — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(26,26,24,0.2); color: var(--ink);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    /* Timeline spanning 150 years */
+    .timeline {
+      display: flex; flex-direction: column; gap: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 2.5rem;
+    }
+    .timeline-item {
+      display: flex; gap: 1.25rem; padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border); align-items: flex-start;
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-year {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem;
+      font-weight: 900; flex-shrink: 0; width: 48px; line-height: 1.1;
+      margin-top: 2px;
+    }
+    .timeline-content { flex: 1; }
+    .timeline-event {
+      font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 3px;
+    }
+    .timeline-detail {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: var(--muted); letter-spacing: 0.03em; line-height: 1.6;
+    }
+
+    .span-callout {
+      width: 100%;
+      background: rgba(26,26,24,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem;
+      margin-bottom: 2.5rem; text-align: center;
+    }
+    .span-number {
+      font-family: 'Playfair Display', serif; font-size: 2.5rem;
+      font-weight: 900; color: var(--ink); line-height: 1;
+    }
+    .span-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+      display: block; margin-top: 4px;
+    }
+
+    /* Object cards */
+    .object-card {
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 1.25rem;
+    }
+    .object-header {
+      padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .object-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+    .object-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px;
+      border: 1px solid; border-radius: 2px; flex-shrink: 0;
+    }
+    .tag-chi { color: var(--chicago); border-color: rgba(200,56,3,0.3); }
+    .tag-phi { color: var(--philly); border-color: rgba(0,76,151,0.3); }
+    .tag-eagles { color: #004C54; border-color: rgba(0,76,84,0.3); }
+
+    .object-body { padding: 1rem 1.25rem; background: rgba(26,26,24,0.02); }
+    .object-detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem; margin-bottom: 0.75rem;
+    }
+    .object-detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      display: block; margin-bottom: 2px;
+    }
+    .object-detail-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+    .object-desc { font-size: 0.82rem; line-height: 1.65; color: var(--muted); }
+
+    .thumb-sub {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px;
+    }
+    .thumb-sub-img {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      border-radius: 2px; cursor: pointer;
+    }
+    .thumb-sub-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .friend-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(0,76,84,0.06); border: 1px solid rgba(0,76,84,0.2);
+      border-radius: 4px; padding: 5px 10px; margin-top: 8px;
+    }
+    .friend-badge span {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      color: #004C54; letter-spacing: 0.04em;
+    }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s; margin-top: 1rem;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">World's Fair Shadow Box</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3110.jpeg" alt="World's Fair Shadow Box" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3110.jpeg', this)">
+        <img src="../images/IMG_3110.jpeg" alt="Shadow box photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/MbMAAeSwwU5pneHR/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/MbMAAeSwwU5pneHR/s-l1600.jpg" alt="Chicago booklet 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/6IsAAeSwQuppneHY/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/6IsAAeSwQuppneHY/s-l1600.jpg" alt="Chicago booklet 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/-fwAAeSwXXBpneHb/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/-fwAAeSwXXBpneHb/s-l1600.jpg" alt="Chicago booklet 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/DmYAAeSwEYBpneHc/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/DmYAAeSwEYBpneHc/s-l1600.jpg" alt="Chicago booklet 4">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/0psAAeSwhTxplvXF/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/0psAAeSwhTxplvXF/s-l1600.jpg" alt="Philly fan 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/s-sAAeSwrpRplvXF/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/s-sAAeSwrpRplvXF/s-l1600.jpg" alt="Philly fan 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/rY8AAeSw9Q5plvXF/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/rY8AAeSw9Q5plvXF/s-l1600.jpg" alt="Philly fan 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/nf8AAeSw6HRplvXF/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/nf8AAeSw6HRplvXF/s-l1600.jpg" alt="Philly fan 4">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/f7EAAeSwG8RplvXF/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/f7EAAeSwG8RplvXF/s-l1600.jpg" alt="Philly fan 5">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="section-tag">Shadow Box · Three Objects</span>
+    <h1>World's Fair Shadow Box</h1>
+    <div class="subtitle">1876 Philadelphia · 1893 Chicago · 2025 Philadelphia — 149 years in one frame</div>
+    <div class="divider-line"></div>
+
+    <div class="span-callout">
+      <div class="span-number">149</div>
+      <span class="span-label">Years spanned by the objects in this shadow box</span>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year" style="color: var(--philly);">1876</div>
+        <div class="timeline-content">
+          <div class="timeline-event">Philadelphia Centennial Exhibition Fan</div>
+          <div class="timeline-detail">Fairmount Park, Philadelphia · America's first World's Fair</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year" style="color: var(--chicago);">1893</div>
+        <div class="timeline-content">
+          <div class="timeline-event">World's Columbian Exposition Booklet</div>
+          <div class="timeline-detail">Chicago · The White City · 400th anniversary of Columbus's voyage</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year" style="color: #004C54;">2025</div>
+        <div class="timeline-content">
+          <div class="timeline-event">Super Bowl LIX Confetti — Eagles win</div>
+          <div class="timeline-detail">Philadelphia Eagles defeat Kansas City Chiefs · Gift from Jon</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1893 Chicago booklet -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">1893 World's Columbian Exposition Booklet</div>
+        <span class="object-tag tag-chi">Chicago</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Year</span>
+            <span class="object-detail-value">1893</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Location</span>
+            <span class="object-detail-value">Chicago, Illinois</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Format</span>
+            <span class="object-detail-value">Accordion-style pictorial album</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Printed</span>
+            <span class="object-detail-value">Germany</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Significance</span>
+            <span class="object-detail-value">400th anniversary of Columbus's voyage</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Featured</span>
+            <span class="object-detail-value">The "White City" architecture</span>
+          </div>
+        </div>
+        <p class="object-desc" style="margin-top: 8px;">A rare accordion-style photographic souvenir booklet from the 1893 World's Columbian Exposition in Chicago — one of the most significant events in American history. The fair introduced electric lights to millions of Americans for the first time, and its grand "White City" of neoclassical buildings on the Chicago lakefront became one of the most photographed places on earth. Printed in Germany and published in the U.S., this booklet contains historical views of the fair's architecture and exhibits.</p>
+      </div>
+    </div>
+
+    <!-- 1876 Philadelphia fan -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">1876 Philadelphia Centennial Exhibition Fan</div>
+        <span class="object-tag tag-phi">Philadelphia</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Year</span>
+            <span class="object-detail-value">1876</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Location</span>
+            <span class="object-detail-value">Fairmount Park, Philadelphia</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Format</span>
+            <span class="object-detail-value">Paper folding fan souvenir</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Decoration</span>
+            <span class="object-detail-value">Main building + Asian motifs</span>
+          </div>
+        </div>
+        <p class="object-desc" style="margin-top: 8px;">An antique paper folding fan from the 1876 Philadelphia Centennial Exhibition — America's first World's Fair, held to celebrate the country's 100th birthday. One side features the main exhibition building in Fairmount Park; the other features Asian decorative motifs, reflecting the international character of the fair. Nearly 150 years old and still intact. Philadelphia hosted the world before Chicago did.</p>
+      </div>
+    </div>
+
+    <!-- Super Bowl confetti -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">Super Bowl LIX Confetti — Eagles Championship</div>
+        <span class="object-tag tag-eagles">Eagles</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Game</span>
+            <span class="object-detail-value">Super Bowl LIX</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Result</span>
+            <span class="object-detail-value">Eagles defeat Chiefs</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Year</span>
+            <span class="object-detail-value">2025</span>
+          </div>
+          <div>
+            <span class="object-detail-label">From</span>
+            <span class="object-detail-value">The field, postgame</span>
+          </div>
+        </div>
+        <div class="friend-badge">
+          <span>★ Gift from Jon</span>
+        </div>
+        <p class="object-desc" style="margin-top: 10px;">Confetti from Super Bowl LIX — the Philadelphia Eagles defeating the Kansas City Chiefs for the championship. This wasn't bought or collected; it was given by a great friend who was there. It sat on that field. It fell from that ceiling. It's the newest thing in the oldest frame in the collection, tucked in the corner of a shadow box next to an 1876 fan and an 1893 booklet. Philadelphia, then and now.</p>
+      </div>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This shadow box is the most conceptually ambitious piece in the collection. Three objects, 149 years apart, from the two cities at the center of everything on this wall. Chicago hosted the world in 1893. Philadelphia hosted it in 1876 — 17 years earlier. And in 2025, Philadelphia won the Super Bowl, and a friend brought back a handful of confetti from the field.</p>
+      <p>One frame. Two cities. A century and a half of history, compressed into a shadow box hanging in a Chicago apartment. It's the whole point of the wall, in miniature.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

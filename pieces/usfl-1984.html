@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1984 USFL — Stars vs Blitz — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+    nav { border-bottom: 1.5px solid var(--ink); padding: 1rem 3rem; display: flex; align-items: center; gap: 0.75rem; }
+    nav a { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; transition: color 0.15s; }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em; }
+    .page { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: calc(100vh - 56px); }
+    .image-panel { border-right: 1px solid var(--border); padding: 2.5rem 2rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+    .main-img { width: 100%; aspect-ratio: 4/5; overflow: hidden; border: 1px solid var(--border); background: #e8e3da; }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb { aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border); background: #e8e3da; cursor: pointer; transition: border-color 0.15s; }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+    .secret-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border: 1px solid rgba(139,90,43,0.4); color: #8B5A2B; border-radius: 2px; display: inline-block; margin-bottom: 0.5rem; }
+    .sport-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border: 1px solid rgba(0,76,151,0.3); color: var(--philly); border-radius: 2px; display: inline-block; margin-bottom: 1.25rem; margin-left: 6px; }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .subtitle { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem; }
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 2.5rem; overflow: hidden; }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+    .teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2.5rem; }
+    .team-card { background: rgba(26,26,24,0.04); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem; }
+    .team-city { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+    .team-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .team-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .desc-heading { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem; }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 2px; transition: all 0.15s; }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+    @media (max-width: 768px) { nav { padding: 1rem 1.5rem; } .page { grid-template-columns: 1fr; } .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); } .detail-panel { padding: 1.5rem; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">1984 USFL — Stars vs Blitz</span>
+</nav>
+<div class="page">
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="https://i.ebayimg.com/images/g/BUQAAOSwALtlxlig/s-l1600.jpg" alt="1984 USFL Philadelphia Stars vs Chicago Blitz" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('https://i.ebayimg.com/images/g/BUQAAOSwALtlxlig/s-l1600.jpg', this)"><img src="https://i.ebayimg.com/images/g/BUQAAOSwALtlxlig/s-l1600.jpg" alt="Cover"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/sDQAAOSwSDBlxlih/s-l1600.jpg', this)"><img src="https://i.ebayimg.com/images/g/sDQAAOSwSDBlxlih/s-l1600.jpg" alt="Page 2"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/yi0AAOSwcIFlxlij/s-l1600.jpg', this)"><img src="https://i.ebayimg.com/images/g/yi0AAOSwcIFlxlij/s-l1600.jpg" alt="Page 3"></div>
+      <div class="thumb" onclick="setMain('../images/1779025058963_IMG_2901.jpeg', this)"><img src="../images/1779025058963_IMG_2901.jpeg" alt="Howard Eskin page"></div>
+    </div>
+  </div>
+  <div class="detail-panel">
+    <span class="secret-tag">★ Secret Stash</span>
+    <span class="sport-tag">USFL · Football</span>
+    <h1>1984 USFL Kickoff Program</h1>
+    <div class="subtitle">Philadelphia Stars vs Chicago Blitz · April 14, 1984</div>
+    <div class="divider-line"></div>
+    <div class="details-grid">
+      <div class="detail-cell"><div class="detail-label">Date</div><div class="detail-value">April 14, 1984</div></div>
+      <div class="detail-cell"><div class="detail-label">League</div><div class="detail-value">United States Football League</div></div>
+      <div class="detail-cell"><div class="detail-label">Teams</div><div class="detail-value">Stars vs Blitz</div></div>
+      <div class="detail-cell"><div class="detail-label">Type</div><div class="detail-value">Kickoff Program</div></div>
+      <div class="detail-cell"><div class="detail-label">Season</div><div class="detail-value">1984 USFL — spring season</div></div>
+      <div class="detail-cell"><div class="detail-label">Location</div><div class="detail-value">Hidden inside a frame</div></div>
+    </div>
+    <div class="teams-grid">
+      <div class="team-card">
+        <div class="team-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="team-name">Philadelphia Stars</div>
+        <div class="team-detail">One of the USFL's powerhouse franchises. The Stars won the 1984 USFL Championship — this game was played during that title-winning season. They were coached by Jim Mora and were one of the most well-run organizations in the league.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-city" style="color: var(--chicago);">Chicago</div>
+        <div class="team-name">Chicago Blitz</div>
+        <div class="team-detail">The Blitz had a short but memorable run in the USFL, known for an aggressive style and a passionate Chicago fanbase. They played at Soldier Field, bringing a Chicago NFL feel to the upstart spring league.</div>
+      </div>
+    </div>
+    <div class="desc-heading">Hidden inside: Howard Eskin</div>
+    <div class="desc-body">
+      <p>One of the pages inside this program features a full-page ad for Howard Eskin — "Howard Eskin Tells It Like It Is" — promoting his sports coverage on Eyewitness News Channel 3 in Philadelphia. A quintessential Philadelphia sports media moment tucked inside a USFL program.</p>
+      <p>The USFL was the most serious challenger the NFL ever faced — a spring league that signed big names, played exciting football, and nearly forced a merger before a catastrophic decision to move to a fall schedule sealed its fate in 1986. The 1984 season, when this program was printed, was the league at its peak. The Stars won it all that year.</p>
+      <p>Philadelphia vs Chicago, spring football, 1984. Hidden behind a frame for decades.</p>
+    </div>
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+</div>
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+</body>
+</html>

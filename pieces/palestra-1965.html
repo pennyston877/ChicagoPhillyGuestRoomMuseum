@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1965 Palestra Program — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+    nav { border-bottom: 1.5px solid var(--ink); padding: 1rem 3rem; display: flex; align-items: center; gap: 0.75rem; }
+    nav a { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; transition: color 0.15s; }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em; }
+    .page { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: calc(100vh - 56px); }
+    .image-panel { border-right: 1px solid var(--border); padding: 2.5rem 2rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+    .main-img { width: 100%; aspect-ratio: 4/5; overflow: hidden; border: 1px solid var(--border); background: #e8e3da; }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb { aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border); background: #e8e3da; cursor: pointer; transition: border-color 0.15s; }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+    .secret-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border: 1px solid rgba(139,90,43,0.4); color: #8B5A2B; border-radius: 2px; display: inline-block; margin-bottom: 0.5rem; }
+    .sport-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border: 1px solid rgba(0,76,151,0.3); color: var(--philly); border-radius: 2px; display: inline-block; margin-bottom: 1.25rem; margin-left: 6px; }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .subtitle { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem; }
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 2.5rem; overflow: hidden; }
+    .detail-cell { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border); }
+    .detail-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+    .detail-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .detail-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+    .detail-value { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+    .teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2.5rem; }
+    .team-card { background: rgba(26,26,24,0.04); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem; }
+    .team-city { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+    .team-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .team-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .palestra-callout { width: 100%; background: rgba(0,76,151,0.06); border-left: 3px solid var(--philly); border-radius: 0 4px 4px 0; padding: 1rem 1.25rem; margin-bottom: 2.5rem; }
+    .palestra-callout p { font-size: 0.88rem; line-height: 1.65; color: var(--ink); }
+    .desc-heading { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem; }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 2px; transition: all 0.15s; }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+    @media (max-width: 768px) { nav { padding: 1rem 1.5rem; } .page { grid-template-columns: 1fr; } .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); } .detail-panel { padding: 1.5rem; } }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">1965 Palestra Program</span>
+</nav>
+<div class="page">
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="https://i.ebayimg.com/images/g/yosAAeSwBv5oe8oA/s-l1600.png" alt="1965 Palestra Illustrated Basketball Program" id="mainImgEl">
+    </div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('https://i.ebayimg.com/images/g/yosAAeSwBv5oe8oA/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/yosAAeSwBv5oe8oA/s-l1600.png" alt="Cover"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/4TkAAeSwfk9oe8oP/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/4TkAAeSwfk9oe8oP/s-l1600.png" alt="Page 2"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/BNIAAeSwp0Joe8od/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/BNIAAeSwp0Joe8od/s-l1600.png" alt="Page 3"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/cocAAeSwCyFoe8oq/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/cocAAeSwCyFoe8oq/s-l1600.png" alt="Page 4"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/1OYAAeSwe85oe8o2/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/1OYAAeSwe85oe8o2/s-l1600.png" alt="Page 5"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/DtQAAeSwwFxoe8pF/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/DtQAAeSwwFxoe8pF/s-l1600.png" alt="Page 6"></div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/DxsAAeSwNr5oe8pT/s-l1600.png', this)"><img src="https://i.ebayimg.com/images/g/DxsAAeSwNr5oe8pT/s-l1600.png" alt="Page 7"></div>
+    </div>
+  </div>
+  <div class="detail-panel">
+    <span class="secret-tag">★ Secret Stash</span>
+    <span class="sport-tag">NCAA · Basketball</span>
+    <h1>1965 Palestra Illustrated Program</h1>
+    <div class="subtitle">Temple · La Salle · Villanova · DePaul · The Palestra, Philadelphia · 1965</div>
+    <div class="divider-line"></div>
+    <div class="details-grid">
+      <div class="detail-cell"><div class="detail-label">Year</div><div class="detail-value">1965</div></div>
+      <div class="detail-cell"><div class="detail-label">Venue</div><div class="detail-value">The Palestra, Philadelphia</div></div>
+      <div class="detail-cell"><div class="detail-label">Publication</div><div class="detail-value">Palestra Illustrated</div></div>
+      <div class="detail-cell"><div class="detail-label">Teams</div><div class="detail-value">Temple, La Salle, Villanova, DePaul</div></div>
+      <div class="detail-cell"><div class="detail-label">Sport</div><div class="detail-value">College Basketball</div></div>
+      <div class="detail-cell"><div class="detail-label">Location</div><div class="detail-value">Hidden inside a frame</div></div>
+    </div>
+    <div class="palestra-callout">
+      <p>The Palestra is the most storied college basketball arena in America — a 1927 gymnasium at the University of Pennsylvania that became the spiritual home of Philadelphia basketball. Five Big 5 schools, one building, decades of the most intense college hoops anywhere.</p>
+    </div>
+    <div class="desc-heading">The teams</div>
+    <div class="teams-grid">
+      <div class="team-card">
+        <div class="team-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="team-name">Temple Owls</div>
+        <div class="team-detail">One of Philadelphia's Big 5 programs, with a proud basketball tradition going back decades. Temple at the Palestra was always a home game in spirit.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="team-name">La Salle Explorers</div>
+        <div class="team-detail">La Salle was the powerhouse of the early Big 5 era — Tom Gola led them to the 1954 NCAA championship, and by 1965 the program was still one of the most respected in the country.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-city" style="color: var(--philly);">Philadelphia</div>
+        <div class="team-name">Villanova Wildcats</div>
+        <div class="team-detail">A Big 5 mainstay and perennial NCAA contender. Villanova basketball at the Palestra was electric — one of the great atmospheres in college sports.</div>
+      </div>
+      <div class="team-card">
+        <div class="team-city" style="color: var(--chicago);">Chicago</div>
+        <div class="team-name">DePaul Blue Demons</div>
+        <div class="team-name" style="font-size:0.78rem; font-weight:400; margin-top:2px;">Chicago's representative</div>
+        <div class="team-detail">DePaul brought Chicago to the Palestra — one of the great Catholic basketball schools of the Midwest, making the trip east to face Philadelphia's finest.</div>
+      </div>
+    </div>
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>This program was hidden inside one of the frames on the wall — part of the secret stash. A 1965 Palestra Illustrated program for a doubleheader featuring three Philadelphia Big 5 schools and DePaul from Chicago. Even the secret items follow the theme.</p>
+      <p>The Palestra in 1965 was at the peak of its powers as the cathedral of Philadelphia basketball. The Big 5 — Penn, Temple, La Salle, Villanova, and Saint Joseph's — played their home games there and faced each other in a round-robin series that was the most intense rivalry in college hoops. A DePaul appearance made it a true Philadelphia-Chicago matchup.</p>
+    </div>
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+</div>
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transit Brochures — CTA & SEPTA — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); text-decoration: none; text-transform: uppercase;
+      letter-spacing: 0.08em; transition: color 0.15s;
+    }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em;
+    }
+
+    .page {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 56px);
+    }
+
+    .image-panel {
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 2rem; position: sticky; top: 0;
+      height: 100vh; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+
+    .main-img {
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
+      border: 1px solid var(--border); background: #e8e3da;
+    }
+    .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+
+    .thumb-section-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .thumb {
+      aspect-ratio: 1; overflow: hidden; border: 1px solid var(--border);
+      background: #e8e3da; cursor: pointer; transition: border-color 0.15s;
+    }
+    .thumb:hover { border-color: var(--ink); }
+    .thumb.active { border-color: var(--ink); border-width: 2px; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .detail-panel { padding: 2.5rem 3rem 4rem; overflow-y: auto; }
+
+    .section-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
+      border: 1px solid rgba(26,26,24,0.2); color: var(--ink);
+      border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
+      color: var(--muted); letter-spacing: 0.04em; margin-bottom: 2rem;
+    }
+
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2rem; }
+
+    .object-card {
+      border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .object-header {
+      padding: 0.9rem 1.25rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .object-name { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+    .object-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem;
+      text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px;
+      border: 1px solid; border-radius: 2px; flex-shrink: 0;
+    }
+    .tag-chi { color: var(--chicago); border-color: rgba(200,56,3,0.3); }
+    .tag-phi { color: var(--philly); border-color: rgba(0,76,151,0.3); }
+
+    .object-body { padding: 1rem 1.25rem; background: rgba(26,26,24,0.02); }
+    .object-detail-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem; margin-bottom: 0.85rem;
+    }
+    .object-detail-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      display: block; margin-bottom: 2px;
+    }
+    .object-detail-value { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+    .object-desc { font-size: 0.82rem; line-height: 1.65; color: var(--muted); }
+
+    .desc-heading {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.75rem;
+    }
+    .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
+    .desc-body p + p { margin-top: 0.75rem; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 2px; transition: all 0.15s; margin-top: 0.5rem;
+    }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .page { grid-template-columns: 1fr; }
+      .image-panel { position: static; height: auto; padding: 1.5rem; border-right: none; border-bottom: 1px solid var(--border); }
+      .detail-panel { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Transit Brochures — CTA & SEPTA</span>
+</nav>
+
+<div class="page">
+
+  <div class="image-panel">
+    <div class="main-img">
+      <img src="../images/IMG_3096.jpeg" alt="CTA Transit Map 1954 and SEPTA Timetable 1965" id="mainImgEl">
+    </div>
+
+    <div class="thumb-section-label">CTA Map — Chicago</div>
+    <div class="thumb-row">
+      <div class="thumb active" onclick="setMain('../images/IMG_3096.jpeg', this)">
+        <img src="../images/IMG_3096.jpeg" alt="Your framed photo">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/UJIAAeSwfJZpsv6H/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/UJIAAeSwfJZpsv6H/s-l1600.jpg" alt="CTA 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/vxUAAeSwXQJpsv6H/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/vxUAAeSwXQJpsv6H/s-l1600.jpg" alt="CTA 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/QkIAAeSw6Mhpsv6I/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/QkIAAeSw6Mhpsv6I/s-l1600.jpg" alt="CTA 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/ohAAAeSwwXdpsv6H/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/ohAAAeSwwXdpsv6H/s-l1600.jpg" alt="CTA 4">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/V9IAAeSwzORpsv6N/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/V9IAAeSwzORpsv6N/s-l1600.jpg" alt="CTA 5">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/Rw4AAeSw2yNpsv6M/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/Rw4AAeSw2yNpsv6M/s-l1600.jpg" alt="CTA 6">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/DVEAAeSwQ6Rpsv6M/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/DVEAAeSwQ6Rpsv6M/s-l1600.jpg" alt="CTA 7">
+      </div>
+    </div>
+
+    <div class="thumb-section-label">SEPTA Timetable — Philadelphia</div>
+    <div class="thumb-row">
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/h5EAAeSw8P5oqOnQ/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/h5EAAeSw8P5oqOnQ/s-l1600.jpg" alt="SEPTA 1">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/r7sAAeSwsVdoqOnQ/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/r7sAAeSwsVdoqOnQ/s-l1600.jpg" alt="SEPTA 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/hagAAeSwCyNoqOnQ/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/hagAAeSwCyNoqOnQ/s-l1600.jpg" alt="SEPTA 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/bT8AAeSwZB1oqOnQ/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/bT8AAeSwZB1oqOnQ/s-l1600.jpg" alt="SEPTA 4">
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-panel">
+    <span class="section-tag">Transit · Ephemera</span>
+    <h1>Transit Brochures</h1>
+    <div class="subtitle">Chicago Transit Authority 1954 · Pennsylvania Railroad / SEPTA 1965</div>
+    <div class="divider-line"></div>
+
+    <!-- CTA Map -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">1954 Chicago Transit Authority Map</div>
+        <span class="object-tag tag-chi">Chicago</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Year</span>
+            <span class="object-detail-value">1954</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Issued by</span>
+            <span class="object-detail-value">Chicago Transit Authority</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Coverage</span>
+            <span class="object-detail-value">Streetcar, Bus, "L" & Subway</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Also shows</span>
+            <span class="object-detail-value">Connecting suburban bus routes</span>
+          </div>
+        </div>
+        <p class="object-desc" style="margin-top: 8px;">A 1954 CTA system map showing Chicago's full transit network at its mid-century peak — the famous "L" elevated lines, the streetcars that would soon be retired, the subway, and the buses. The CTA was formed in 1947 by consolidating the city's private transit companies, and this map is from the early years of that unified system. Chicago's "L" is one of the oldest rapid transit systems in the world, and this map captures it before the city began tearing out streetcar lines in the late 1950s.</p>
+      </div>
+    </div>
+
+    <!-- SEPTA timetable -->
+    <div class="object-card">
+      <div class="object-header">
+        <div class="object-name">1965 Pennsylvania Railroad / SEPTA Timetable</div>
+        <span class="object-tag tag-phi">Philadelphia</span>
+      </div>
+      <div class="object-body">
+        <div class="object-detail-grid">
+          <div>
+            <span class="object-detail-label">Effective date</span>
+            <span class="object-detail-value">October 31, 1965</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Route</span>
+            <span class="object-detail-value">Chestnut Hill — Philadelphia</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Operation</span>
+            <span class="object-detail-value">"Operation Northwest"</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Logos</span>
+            <span class="object-detail-value">Pennsylvania Railroad + SEPTA</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Stations</span>
+            <span class="object-detail-value">Chestnut Hill, Highland, St. Martins, Allen Lane & more</span>
+          </div>
+          <div>
+            <span class="object-detail-label">Transfer</span>
+            <span class="object-detail-value">PTC Bus connections listed</span>
+          </div>
+        </div>
+        <p class="object-desc" style="margin-top: 8px;">A 1965 Pennsylvania Railroad timetable for the Chestnut Hill line — one of Philadelphia's most beloved commuter rail routes, running through the leafy northwest neighborhoods of the city. The timetable sits at a fascinating moment in Philadelphia transit history: the Pennsylvania Railroad still operates the line, but the SEPTA logo already appears, signaling the transition to the public authority that would take over regional rail in the years ahead. "Operation Northwest" is printed at the top — a very 1960s way of naming a train schedule.</p>
+      </div>
+    </div>
+
+    <div class="desc-heading">About this piece</div>
+    <div class="desc-body">
+      <p>Two cities, two transit systems, two different eras of American urban life — framed together. The 1954 CTA map and the 1965 SEPTA timetable are the kind of objects that were printed by the millions and saved by almost nobody. They were functional documents: you used them to get somewhere, then threw them away. The fact that either of these survived is a small miracle of hoarding and luck.</p>
+      <p>Together they capture something real about Chicago and Philadelphia — two cities built around dense, walkable neighborhoods connected by transit long before the car took over. The "L" still runs. The Chestnut Hill line still runs. The cities are still there. These papers from 1954 and 1965 are proof that they always were.</p>
+    </div>
+
+    <a href="../index.html" class="back-btn">← Back to the wall</a>
+  </div>
+
+</div>
+
+<script>
+  function setMain(src, thumb) {
+    document.getElementById('mainImgEl').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

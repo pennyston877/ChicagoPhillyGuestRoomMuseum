@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crossover Cards — The Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --philly: #004C97;
+      --chicago: #C83803;
+      --cream: #F5F0E8;
+      --ink: #1A1A18;
+      --muted: #6B6660;
+      --border: rgba(26,26,24,0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      border-bottom: 1.5px solid var(--ink);
+      padding: 1rem 3rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    nav a { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; transition: color 0.15s; }
+    nav a:hover { color: var(--ink); }
+    nav .sep { color: var(--border); font-size: 0.8rem; }
+    nav .current { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .header {
+      padding: 2.5rem 3rem 0;
+      max-width: 900px;
+    }
+    .section-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border: 1px solid rgba(26,26,24,0.25); color: var(--ink); border-radius: 2px; display: inline-block; margin-bottom: 1.25rem; }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+    .intro { font-size: 0.9rem; line-height: 1.75; color: var(--muted); max-width: 600px; margin-bottom: 2.5rem; }
+    .divider-line { width: 40px; height: 1.5px; background: var(--ink); margin-bottom: 2.5rem; }
+
+    /* Cards grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      padding: 0 3rem 4rem;
+    }
+
+    .player-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .card-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: #e8e3da;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .card-image.arriving {
+      background: repeating-linear-gradient(
+        45deg,
+        #e8e3da,
+        #e8e3da 10px,
+        #ede8df 10px,
+        #ede8df 20px
+      );
+    }
+    .card-placeholder-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-align: center;
+      padding: 0 1rem;
+    }
+    .card-placeholder-icon {
+      font-size: 2rem;
+      opacity: 0.3;
+    }
+
+    .card-body { padding: 1rem 1.25rem; }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .card-sport { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; }
+
+    .crossover-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .city-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border: 1px solid;
+      border-radius: 2px;
+    }
+    .pill-phi { color: var(--philly); border-color: rgba(0,76,151,0.3); background: rgba(0,76,151,0.05); }
+    .pill-chi { color: var(--chicago); border-color: rgba(200,56,3,0.3); background: rgba(200,56,3,0.05); }
+    .crossover-arrow { font-size: 0.7rem; color: var(--muted); }
+
+    .card-desc { font-size: 0.78rem; line-height: 1.6; color: var(--muted); }
+
+    .arriving-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      background: var(--ink);
+      color: var(--cream);
+      border-radius: 2px;
+    }
+
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 2px; transition: all 0.15s; margin: 0 3rem 3rem; display: inline-flex; }
+    .back-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+    @media (max-width: 640px) {
+      .header { padding: 1.5rem 1.5rem 0; }
+      .cards-grid { padding: 0 1.5rem 3rem; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+      .back-btn { margin: 0 1.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html">The Wall</a>
+  <span class="sep">/</span>
+  <span class="current">Crossover Cards</span>
+</nav>
+
+<div class="header">
+  <span class="section-tag">Signed Cards · Collection</span>
+  <h1>The Crossover Cards</h1>
+  <div class="divider-line"></div>
+  <p class="intro">Players who wore both cities. Some were legends on one side and barely a footnote on the other. Some crossed over at the peak of their careers. All of them belong on this wall.</p>
+</div>
+
+<div class="cards-grid">
+
+  <!-- Jimmy Rollins -->
+  <div class="player-card">
+    <div class="card-image arriving">
+      <span class="card-placeholder-icon">⚾</span>
+      <span class="card-placeholder-label">Card arriving soon</span>
+      <span class="arriving-badge">En route</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Jimmy Rollins</div>
+      <div class="card-sport">MLB · Shortstop</div>
+      <div class="crossover-row">
+        <span class="city-pill pill-phi">Phillies</span>
+        <span class="crossover-arrow">→</span>
+        <span class="city-pill pill-chi">White Sox</span>
+      </div>
+      <p class="card-desc">15 seasons as a Phillie, 3-time All-Star, 2007 NL MVP, and the heartbeat of the 2008 World Series championship team. His brief stint with the White Sox in 2016 was the footnote at the end of a Philly legend's career.</p>
+    </div>
+  </div>
+
+  <!-- John Kruk -->
+  <div class="player-card">
+    <div class="card-image arriving">
+      <span class="card-placeholder-icon">⚾</span>
+      <span class="card-placeholder-label">Card arriving soon</span>
+      <span class="arriving-badge">En route</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">John Kruk</div>
+      <div class="card-sport">MLB · First Baseman</div>
+      <div class="crossover-row">
+        <span class="city-pill pill-phi">Phillies</span>
+        <span class="crossover-arrow">→</span>
+        <span class="city-pill pill-chi">White Sox</span>
+      </div>
+      <p class="card-desc">One of the most beloved Phillies of his generation — a fan favorite who played with grit, humor, and a left-handed swing that looked wrong and worked perfectly. His 1994 White Sox stint lasted just 45 games before illness ended his career.</p>
+    </div>
+  </div>
+
+  <!-- Patrick Sharp -->
+  <div class="player-card">
+    <div class="card-image arriving">
+      <span class="card-placeholder-icon">🏒</span>
+      <span class="card-placeholder-label">Card arriving soon</span>
+      <span class="arriving-badge">En route</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Patrick Sharp</div>
+      <div class="card-sport">NHL · Left Wing</div>
+      <div class="crossover-row">
+        <span class="city-pill pill-phi">Phantoms</span>
+        <span class="crossover-arrow">→</span>
+        <span class="city-pill pill-chi">Blackhawks</span>
+      </div>
+      <p class="card-desc">Sharp came up through the Flyers organization and played for the Philadelphia Phantoms — the AHL affiliate — before being traded to Chicago, where he became a three-time Stanley Cup champion and one of the most popular Blackhawks of the dynasty era.</p>
+    </div>
+  </div>
+
+  <!-- Jason Peters -->
+  <div class="player-card">
+    <div class="card-image arriving">
+      <span class="card-placeholder-icon">🏈</span>
+      <span class="card-placeholder-label">Card arriving soon</span>
+      <span class="arriving-badge">En route</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Jason Peters</div>
+      <div class="card-sport">NFL · Offensive Tackle</div>
+      <div class="crossover-row">
+        <span class="city-pill pill-phi">Eagles</span>
+        <span class="crossover-arrow">→</span>
+        <span class="city-pill pill-chi">Bears</span>
+      </div>
+      <p class="card-desc">One of the greatest offensive linemen in Eagles history — a two-time All-Pro and cornerstone of Philadelphia's offensive line for over a decade, including the 2017 Super Bowl run. His brief Bears stint in 2021 was the final chapter of a Hall of Fame-caliber career.</p>
+    </div>
+  </div>
+
+  <!-- Nick Foles -->
+  <div class="player-card">
+    <div class="card-image arriving">
+      <span class="card-placeholder-icon">🏈</span>
+      <span class="card-placeholder-label">Card arriving soon</span>
+      <span class="arriving-badge">En route</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Nick Foles</div>
+      <div class="card-sport">NFL · Quarterback</div>
+      <div class="crossover-row">
+        <span class="city-pill pill-phi">Eagles</span>
+        <span class="crossover-arrow">→</span>
+        <span class="city-pill pill-chi">Bears</span>
+      </div>
+      <p class="card-desc">Super Bowl LII MVP. The man who beat the Patriots when nobody thought it was possible. Foles signed with Chicago in 2020, becoming a Bear after being a Philadelphia legend — a crossover that still feels strange to type.</p>
+    </div>
+  </div>
+
+  <!-- Mike Ditka -->
+  <div class="player-card">
+    <div class="card-image arriving">
+      <span class="card-placeholder-icon">🏈</span>
+      <span class="card-placeholder-label">Card arriving soon</span>
+      <span class="arriving-badge">En route</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">Mike Ditka</div>
+      <div class="card-sport">NFL · Tight End / Head Coach</div>
+      <div class="crossover-row">
+        <span class="city-pill pill-phi">Eagles</span>
+        <span class="crossover-arrow">↔</span>
+        <span class="city-pill pill-chi">Bears</span>
+      </div>
+      <p class="card-desc">The ultimate crossover. Ditka was drafted by the Bears in 1961, became a Hall of Fame tight end, was traded to the Eagles in 1967 for two seasons — then returned to Chicago as head coach and won Super Bowl XX in 1985. Philadelphia and Chicago, player and coach. Nobody belongs on this wall more than Iron Mike.</p>
+    </div>
+  </div>
+
+</div>
+
+<a href="../index.html" class="back-btn">← Back to the wall</a>
+
+</body>
+</html>

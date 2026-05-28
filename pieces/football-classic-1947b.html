@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flyers Multi-Signed Brawl Photo — The Wall</title>
+  <title>1947 Football Classic — The Wall</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -49,12 +49,10 @@
     }
 
     .main-img {
-      width: 100%; overflow: hidden;
+      width: 100%; aspect-ratio: 4/5; overflow: hidden;
       border: 1px solid var(--border); background: #e8e3da;
     }
     .main-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
-    .main-img.portrait { aspect-ratio: 4/5; }
-    .main-img.landscape { aspect-ratio: 16/10; }
 
     .thumb-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .thumb {
@@ -70,7 +68,7 @@
     .sport-tag {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem;
       letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px;
-      border: 1px solid rgba(247,73,2,0.3); color: #F74902;
+      border: 1px solid rgba(0,76,151,0.3); color: var(--philly);
       border-radius: 2px; display: inline-block; margin-bottom: 1.25rem;
     }
 
@@ -108,46 +106,18 @@
     .desc-body { font-size: 0.9rem; line-height: 1.75; color: var(--ink); margin-bottom: 2rem; }
     .desc-body p + p { margin-top: 0.75rem; }
 
-    .signatures {
-      background: rgba(26,26,24,0.04);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 2.5rem;
-    }
-    .signatures ul {
-      list-style: none;
-      display: flex; flex-wrap: wrap; gap: 6px;
-      margin-top: 0.6rem;
-    }
-    .signatures ul li {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
-      padding: 3px 10px;
-      background: var(--cream);
-      border: 1px solid rgba(247,73,2,0.25);
-      color: #F74902;
-      border-radius: 2px;
-    }
-
-    .psa-badge {
+    .context-badge {
       display: inline-flex; align-items: center; gap: 8px;
       background: rgba(0,76,151,0.06);
       border: 1px solid rgba(0,76,151,0.2);
       border-radius: 4px;
       padding: 0.75rem 1rem;
       margin-bottom: 2.5rem;
+      width: 100%;
     }
-    .psa-badge span {
+    .context-badge span {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
-      color: var(--philly); letter-spacing: 0.05em;
-    }
-
-    .video-wrap {
-      position: relative; width: 100%; padding-bottom: 56.25%;
-      margin-bottom: 2.5rem; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
-    }
-    .video-wrap iframe {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      color: var(--philly); letter-spacing: 0.04em; line-height: 1.5;
     }
 
     .back-btn {
@@ -172,93 +142,79 @@
 <nav>
   <a href="../index.html">The Wall</a>
   <span class="sep">/</span>
-  <span class="current">Flyers Multi-Signed Brawl Photo</span>
+  <span class="current">1947 Football Classic (II)</span>
 </nav>
 
 <div class="page">
 
   <div class="image-panel">
-    <div class="main-img portrait" id="mainImgWrap">
-      <img src="../images/IMG_3100.jpeg" alt="Flyers vs Blackhawks multi-signed brawl photo" id="mainImgEl">
+    <div class="main-img">
+      <img src="../images/IMG_3078.jpeg" alt="1947 Football Classic — Chicago Bears vs Philadelphia Eagles" id="mainImgEl">
     </div>
     <div class="thumb-row">
-      <div class="thumb active" onclick="setMain('../images/IMG_3100.jpeg', this, 'portrait')">
-        <img src="../images/IMG_3100.jpeg" alt="Your framed photo">
+      <div class="thumb active" onclick="setMain('../images/IMG_3078.jpeg', this)">
+        <img src="../images/IMG_3078.jpeg" alt="Your framed photo">
       </div>
-      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/15sAAeSw02JophGJ/s-l1600.jpg', this, 'portrait')">
-        <img src="https://i.ebayimg.com/images/g/15sAAeSw02JophGJ/s-l1600.jpg" alt="eBay photo 1">
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/gM0AAeSwebRpoakQ/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/gM0AAeSwebRpoakQ/s-l1600.jpg" alt="eBay photo 1">
       </div>
-      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/rPEAAeSw~49ophCM/s-l1600.jpg', this, 'landscape')">
-        <img src="https://i.ebayimg.com/images/g/rPEAAeSw~49ophCM/s-l1600.jpg" alt="eBay photo 2 — signatures close-up">
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/PTwAAeSwDy5poakb/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/PTwAAeSwDy5poakb/s-l1600.jpg" alt="eBay photo 2">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/ZQAAAeSwxQFpoakj/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/ZQAAAeSwxQFpoakj/s-l1600.jpg" alt="eBay photo 3">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/SVEAAeSwLE9poakt/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/SVEAAeSwLE9poakt/s-l1600.jpg" alt="eBay photo 4">
+      </div>
+      <div class="thumb" onclick="setMain('https://i.ebayimg.com/images/g/QpIAAeSwrQ5poak1/s-l1600.jpg', this)">
+        <img src="https://i.ebayimg.com/images/g/QpIAAeSwrQ5poak1/s-l1600.jpg" alt="eBay photo 5">
       </div>
     </div>
   </div>
 
   <div class="detail-panel">
-    <span class="sport-tag">NHL · Hockey</span>
-    <h1>Flyers Multi-Signed Brawl Photo</h1>
-    <div class="subtitle">Philadelphia Flyers vs Chicago Blackhawks · 1970s · PSA Authenticated</div>
+    <span class="sport-tag">NFL · Football</span>
+    <h1>10th Annual Football Classic</h1>
+    <div class="subtitle">Chicago Bears vs Philadelphia Eagles · Sept 13, 1947 · Franklin Field, Philadelphia</div>
     <div class="divider-line"></div>
 
     <div class="details-grid">
       <div class="detail-cell">
-        <div class="detail-label">Type</div>
-        <div class="detail-value">Original 8×10 photograph</div>
+        <div class="detail-label">Date</div>
+        <div class="detail-value">September 13, 1947</div>
       </div>
       <div class="detail-cell">
-        <div class="detail-label">Era</div>
-        <div class="detail-value">1970s — Broad Street Bullies</div>
+        <div class="detail-label">Venue</div>
+        <div class="detail-value">Franklin Field, Philadelphia</div>
       </div>
       <div class="detail-cell">
         <div class="detail-label">Teams</div>
-        <div class="detail-value">Flyers vs Blackhawks</div>
+        <div class="detail-value">Bears vs Eagles</div>
       </div>
       <div class="detail-cell">
-        <div class="detail-label">Signatures</div>
-        <div class="detail-value">6 players, signed individually</div>
+        <div class="detail-label">Event</div>
+        <div class="detail-value">10th Annual Football Classic</div>
       </div>
       <div class="detail-cell">
-        <div class="detail-label">Authentication</div>
-        <div class="detail-value">PSA Certificate of Authenticity</div>
+        <div class="detail-label">Sponsor</div>
+        <div class="detail-value">Philadelphia Inquirer Charities</div>
       </div>
       <div class="detail-cell">
-        <div class="detail-label">Format</div>
-        <div class="detail-value">Black & white, framed</div>
+        <div class="detail-label">Original price</div>
+        <div class="detail-value">25 cents</div>
       </div>
     </div>
 
-    <div class="signatures">
-      <div class="desc-heading">Signed by</div>
-      <ul>
-        <li>Bill Barber</li>
-        <li>Orest Kindrachuk</li>
-        <li>Joe Watson</li>
-        <li>Rick MacLeish</li>
-        <li>Simon Nolet</li>
-        <li>Bob Kelly</li>
-      </ul>
-    </div>
-
-    <div class="psa-badge">
-      <span>✓ PSA Certificate of Authenticity</span>
+    <div class="context-badge">
+      <span>☆ The Eagles went on to win back-to-back NFL Championships in 1948 and 1949 — this program is from the season right before that dynasty began.</span>
     </div>
 
     <div class="desc-heading">About this piece</div>
     <div class="desc-body">
-      <p>This is one of the crown jewels of the collection. A vintage black and white 8×10 photograph capturing a full 5-on-5 brawl between the Philadelphia Flyers and Chicago Blackhawks — signed directly on the photo by six Flyers players who were there.</p>
-      <p>The signers are the heart of the "Broad Street Bullies" — the most feared and celebrated team of the 1970s. The Flyers won back-to-back Stanley Cup championships in 1974 and 1975, and their physical, intimidating style of play became the defining identity of Philadelphia sports. When Philly plays Chicago, it was never just a game.</p>
-      <p>Sticks and gloves scattered across the ice. Referees trying to restore order. Six men who lived this moment put their names on it. Authenticated by PSA, this is the real deal.</p>
-    </div>
-
-    <div class="desc-heading">Watch the brawl</div>
-    <div class="video-wrap">
-      <iframe
-        src="https://www.youtube.com/embed/SgwX1s97YWE"
-        title="Flyers vs Blackhawks Brawl"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
+      <p>The Philadelphia Inquirer Football Classic was an annual preseason tradition that brought marquee NFL matchups to Philadelphia every September. This is the 10th edition of that series — played at Franklin Field, the historic University of Pennsylvania stadium that served as the Eagles' home field.</p>
+      <p>The 1947 season was a pivotal moment for Philadelphia football. The Eagles were quietly assembling one of the greatest teams in NFL history under coach Greasy Neale. Steve Van Buren was already one of the most feared running backs in the league. One year after this program was printed, the Eagles would win their first NFL Championship. Then they'd win again in 1949. This game was the calm before the storm.</p>
+      <p>The cover design — a split orange and cream composition with a helmeted player dead center — is a masterpiece of mid-century sports graphic design. Bold, minimal, timeless. It's been on the wall ever since for good reason.</p>
     </div>
 
     <a href="../index.html" class="back-btn">← Back to the wall</a>
@@ -267,13 +223,10 @@
 </div>
 
 <script>
-  function setMain(src, thumb, orientation) {
+  function setMain(src, thumb) {
     document.getElementById('mainImgEl').src = src;
     document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
     thumb.classList.add('active');
-    const wrap = document.getElementById('mainImgWrap');
-    wrap.classList.remove('portrait', 'landscape');
-    wrap.classList.add(orientation);
   }
 </script>
 
